@@ -254,12 +254,16 @@ def implementacion_vial():
 def menu_algoritmos(opcion=None):
     if(opcion == 0):
         return
+
     elif(opcion == 1):
         display_dijkstra.main()
+        os.system("cls")
 
     elif(opcion == 2):
         implementacion_vial()
+        os.system("cls")
         menu_implementacion()
+
     elif(opcion == 3):
        ruta_selec().main()
 
