@@ -15,6 +15,8 @@ from SeleccionRuta import *
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.simplefilter("ignore", UserWarning)
+
+
 def obtener_area_especifica():
 
     print("\n##### [BÚSQUEDA ÁREA ESPECÍFICA.] #####")
@@ -23,12 +25,15 @@ def obtener_area_especifica():
     global coordenadas_area
     area_especifica, coordenadas_area = Localizar.area_especifica(area)
 
-    print(f"Coordenadas area_especifica: {coordenadas_area[0],coordenadas_area[1]}")
+    print(
+        f"Coordenadas area_especifica: {coordenadas_area[0],coordenadas_area[1]}")
+
 
 def menu_implementacion(opcion=None):
     if opcion is None:
         os.system("cls")
-        opcion = int(input("\n\n\t1. Mostrar matplotlib.\n\t2. Mostrar background\n\t3. Mostrar folium.\n\t0. Salir\n\n\t--> "))
+        opcion = int(input(
+            "\n\n\t1. Mostrar matplotlib.\n\t2. Mostrar background\n\t3. Mostrar folium.\n\t0. Salir\n\n\t--> "))
 
     if opcion == 0:
         sys.exit()
@@ -39,7 +44,8 @@ def menu_implementacion(opcion=None):
     elif opcion == 3:
         drawFolium.show_pyqt()
 
-    opcion = int(input("\n\n\t1. Mostrar matplotlib.\n\t2. Mostrar background\n\t3. Mostrar folium.\n\t0. Salir\n\n\t--> "))
+    opcion = int(input(
+        "\n\n\t1. Mostrar matplotlib.\n\t2. Mostrar background\n\t3. Mostrar folium.\n\t0. Salir\n\n\t--> "))
     menu_implementacion(opcion)
 
 
@@ -60,7 +66,8 @@ def proyectar_grafo():
     place_polygon = place_polygon.to_crs(epsg=4326)
 
     # recuperar el grafo
-    graph = ox.graph_from_polygon(place_polygon["geometry"].values[0], network_type='drive')
+    graph = ox.graph_from_polygon(
+        place_polygon["geometry"].values[0], network_type='drive')
 
     # Recuperar solo los bordes o aristas del gráfico
     global edges
@@ -133,9 +140,6 @@ def ubicar_nearest_nodes():
 
 ################################################################################################
 
-# Recupere las filas de los nodos GeoDataFrame según la identificación del nodo
-# (la identificación del nodo es la etiqueta de índice)
-
 
 def filtrar_nodos():
     orig_node = nodes_proj.loc[orig_node_id]
@@ -148,18 +152,20 @@ def filtrar_nodos():
 
 
 def check_path():
-	# Verificar si existe un path y luego calcular el shortest path
-	try:
-		global route
-		route = nx.shortest_path(G=graph_proj, source=orig_node_id, target=target_node_id, weight='length')
-	except nx.NetworkXNoPath:
-		print(f"No se ha podido calcular el camino mínimo por el momento.\nIntente con otros nodos.")
-		return False
-	else:
-		return True
+    # Verificar si existe un path y luego calcular el shortest path
+    try:
+        global route
+        route = nx.shortest_path(
+            G=graph_proj, source=orig_node_id, target=target_node_id, weight='length')
+    except nx.NetworkXNoPath:
+        print(f"No se ha podido calcular el camino mínimo por el momento.\nIntente con otros nodos.")
+        return False
+    else:
+        return True
 
 # Plottear el shortest path con matplotlib
-#fig, ax = ox.plot_graph_route(graph_proj, route)
+# fig, ax = ox.plot_graph_route(graph_proj, route)
+
 
 def crear_dataframe_route():
     # Obtener los nodos a lo largo del camino más corto (shortest path)
@@ -200,7 +206,8 @@ def plottear_elementos():
     ax = od_nodes.plot(ax=ax, markersize=30, color='blue')
 
     # Agregar mapa base usando contextily
-    ctx.add_basemap(ax, crs=buildings_proj.crs,source=ctx.providers.OpenStreetMap.Mapnik)
+    ctx.add_basemap(ax, crs=buildings_proj.crs,
+                    source=ctx.providers.OpenStreetMap.Mapnik)
 
 
 def plot_matplotlib():
@@ -208,31 +215,39 @@ def plot_matplotlib():
     plt.title("Optimización de Trayectos")
     plt.show()
 
+
 def plot_background():
     global bbox
-    bbox = ox.utils_geo.bbox_from_point(point=(coordenadas_inicio[0], coordenadas_inicio[1]), dist=5000)
+    bbox = ox.utils_geo.bbox_from_point(
+        point=(coordenadas_inicio[0], coordenadas_inicio[1]), dist=5000)
     bgcolor = "#061529"
-    fig, ax = ox.plot_graph_route(graph, route, bbox = bbox, route_linewidth=6, node_size=0, bgcolor=bgcolor,dpi = 300)
-    
+    fig, ax = ox.plot_graph_route(
+        graph, route, bbox=bbox, route_linewidth=6, node_size=0, bgcolor=bgcolor, dpi=300)
+
+
 def medio_de_transporte():
-    medio = int(input("\nEn qué medio desea transportarse\n\t1. Caminando.\n\t2. Auto.\n\t3. Bicicleta.\n\t0. Salir\n\n\t--> "))
+    medio = int(input(
+        "\nEn qué medio desea transportarse\n\t1. Caminando.\n\t2. Auto.\n\t3. Bicicleta.\n\t0. Salir\n\n\t--> "))
     if (medio == 0):
         return
-    elif(medio == 1):
+    elif (medio == 1):
         return "walk"
-    elif(medio == 2):
+    elif (medio == 2):
         return "drive"
-    elif(medio == 3):
+    elif (medio == 3):
         return "bike"
     else:
         print("Opción inválida...")
         return medio_de_transporte()
 
+
 def save_folium():
-    #ox.config(use_cache=True)
-    medio=medio_de_transporte()
-    drawFolium.save_map(coordenadas_area, coordenadas_inicio,coordenadas_destino, area_especifica,medio,nodo_inicio,nodo_destino)
+    # ox.config(use_cache=True)
+    medio = medio_de_transporte()
+    drawFolium.save_map(coordenadas_area, coordenadas_inicio,
+                        coordenadas_destino, area_especifica, medio, nodo_inicio, nodo_destino)
     os.system("cls")
+
 
 def implementacion_vial():
     obtener_area_especifica()
@@ -251,22 +266,22 @@ def implementacion_vial():
 
     # Matplotlib
 
+
 def menu_algoritmos(opcion=None):
-    if(opcion == 0):
+    if (opcion == 0):
         return
 
-    elif(opcion == 1):
+    elif (opcion == 1):
         display_dijkstra.main()
         os.system("cls")
 
-    elif(opcion == 2):
+    elif (opcion == 2):
         implementacion_vial()
         os.system("cls")
         menu_implementacion()
 
-    elif(opcion == 3):
-       ruta_selec().main()
-
+    elif (opcion == 3):
+        ruta_selec().main()
 
     new_opcion = int(input("\nSeleccionar el grafo a implementar:\n\n\t1. Dijkstra\n\t"
                            "2. Implementacion Vial\n\t3. Mejor ruta\n\t0. Salir de la aplicacion.\n\n\t\t---> "))
@@ -274,4 +289,3 @@ def menu_algoritmos(opcion=None):
 
 
 menu_algoritmos()
-

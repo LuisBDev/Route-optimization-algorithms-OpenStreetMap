@@ -1,5 +1,6 @@
 from Ruta import *
 
+
 class SeleccionadorRutas:
     def __init__(self, distancia_maxima):
         self.distancia_maxima = distancia_maxima
@@ -9,7 +10,8 @@ class SeleccionadorRutas:
         self.rutas.append(Ruta(distancia, tiempo))
 
     def seleccionar_rutas_voraz(self):
-        rutas_ordenadas = sorted(self.rutas, key=lambda ruta:ruta.distancia,reverse=True)
+        rutas_ordenadas = sorted(
+            self.rutas, key=lambda ruta: ruta.distancia, reverse=True)
         distancia_total = 0
         tiempo_total = 0
         rutas_seleccionadas = []
@@ -20,10 +22,12 @@ class SeleccionadorRutas:
                 tiempo_total += ruta.tiempo
         return rutas_seleccionadas, tiempo_total
 
+
 class ruta_selec():
     def main(self):
         num_rutas = int(input("Ingrese la cantidad de rutas: "))
-        distancia_maxima = int(input("Ingrese la distancia máxima permitida: "))
+        distancia_maxima = int(
+            input("Ingrese la distancia máxima permitida: "))
         seleccionador = SeleccionadorRutas(distancia_maxima=distancia_maxima)
         for i in range(num_rutas):
             print(f"Ingrese los datos de la ruta {i + 1}")
@@ -33,5 +37,6 @@ class ruta_selec():
         rutas_seleccionadas, tiempo_total = seleccionador.seleccionar_rutas_voraz()
         print("Rutas seleccionadas:")
         for ruta in rutas_seleccionadas:
-            print(f"- Ruta de distancia {ruta.distancia} y tiempo {ruta.tiempo}")
+            print(
+                f"- Ruta de distancia {ruta.distancia} y tiempo {ruta.tiempo}")
         print(f"Tiempo total: {tiempo_total}")
