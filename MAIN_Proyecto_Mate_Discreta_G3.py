@@ -11,13 +11,10 @@ from shapely.geometry import LineString, Point
 import folium
 from Localizacion import *
 from DijkstraMain import *
-
-
+from SeleccionRuta import *
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.simplefilter("ignore", UserWarning)
-
-
 def obtener_area_especifica():
 
     print("\n##### [BÚSQUEDA ÁREA ESPECÍFICA.] #####")
@@ -210,7 +207,6 @@ def plot_matplotlib():
     ax.set_axis_off()
     plt.title("Optimización de Trayectos")
     plt.show()
-    #menu_implementacion()
 
 def plot_background():
     global bbox
@@ -238,7 +234,6 @@ def save_folium():
     drawFolium.save_map(coordenadas_area, coordenadas_inicio,coordenadas_destino, area_especifica,medio,nodo_inicio,nodo_destino)
     os.system("cls")
 
-
 def implementacion_vial():
     obtener_area_especifica()
     proyectar_grafo()
@@ -256,21 +251,23 @@ def implementacion_vial():
 
     # Matplotlib
 
-
 def menu_algoritmos(opcion=None):
     if(opcion == 0):
         return
-
-    if(opcion == 1):
+    elif(opcion == 1):
         display_dijkstra.main()
-        os.system("cls")
 
     elif(opcion == 2):
         implementacion_vial()
-        os.system("cls")
         menu_implementacion()
+    elif(opcion == 3):
+       ruta_selec().main()
 
-    new_opcion = int(input("\nSeleccionar el grafo a implementar:\n\n\t1. Dijkstra\n\t2. Implementacion Vial\n\t0. Salir de la aplicacion.\n\n\t\t---> "))
+
+    new_opcion = int(input("\nSeleccionar el grafo a implementar:\n\n\t1. Dijkstra\n\t"
+                           "2. Implementacion Vial\n\t3. Mejor ruta\n\t0. Salir de la aplicacion.\n\n\t\t---> "))
     menu_algoritmos(new_opcion)
 
+
 menu_algoritmos()
+
