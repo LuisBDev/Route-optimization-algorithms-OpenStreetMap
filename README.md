@@ -1,4 +1,4 @@
-# Proyecto-Final-G3-Matematica-Discreta
+# Proyecto-Final-G4_ADA
 
 ![image](https://user-images.githubusercontent.com/90058131/209250206-4dda0383-73e5-4c7d-a5d1-e2f51ed4111f.png)
 ![image](https://user-images.githubusercontent.com/90058131/209250228-17977884-a6d5-4ca7-9801-672bcd3b47fe.png)
@@ -15,7 +15,7 @@ Instalación: pip install -r requirements.txt
 
 FUNCIONAMIENTO:
 
-Ejecutar MAIN_Proyecto_Mate_Discreta_G3 y se mostrará el siguiente menú:
+Ejecutar MAIN_Proyecto_ADA y se mostrará el siguiente menú:
 
 #--------------------------------------------------------------------------------------#
 
