@@ -89,51 +89,6 @@ def proyectar_grafo():
         graph_proj, nodes=True, edges=True)
 
 
-'''
-def input_origen():
-    # Pedir al usuario que ingrese el nodo de inicio.
-
-    # Mostramos las sugerencias de búsqueda y guardamos tanto como las coordenadas y el nombre del nodo de inicio.
-    global nodo_inicio, coordenadas_inicio
-    inicio = input("\n##### [BÚSQUEDA DEL NODO DE ORIGEN.] #####\n\t --> ")
-    nodo_inicio, coordenadas_inicio = Localizar.busqueda_sugerencias(inicio)
-
-    print(coordenadas_inicio)
-
-    # Geocodificar el nombre del lugar
-    geocoded_place = ox.geocode_to_gdf(nodo_inicio, which_result=1)
-
-    # Re-proyectar en el mismo CRS que la red vial
-    geocoded_place = geocoded_place.to_crs(CRS(edges_proj.crs))
-
-    # Obtener centroide como punto shapely
-    global origin
-    origin = geocoded_place["geometry"].centroid.values[0]
-
-
-def input_destino():
-    # Pedir al usuario que ingrese el nodo de destino.
-
-    # Mostramos las sugerencias de búsqueda y guardamos tanto como las coordenadas y el nombre del nodo de destino.
-    global nodo_destino, coordenadas_destino
-    destino = input("\n##### [BÚSQUEDA DEL NODO DE DESTINO.] #####\n\t --> ")
-    nodo_destino, coordenadas_destino = Localizar.busqueda_sugerencias(destino)
-
-    print(coordenadas_destino)  # Imprimir coordenadas del nodo de destino
-
-    # Geocodificar el nodo_destino
-    geocoded_place = ox.geocode_to_gdf(nodo_destino, which_result=1)
-
-    # Recuperar solo los bordes o aristas del gráfico
-    geocoded_place = geocoded_place.to_crs(CRS(edges_proj.crs))
-
-    # Obtener centroide como punto shapely
-    global destination
-    destination = geocoded_place["geometry"].centroid.values[0]
-
-'''
-
-
 def ubicar_nearest_nodes(nodo_origen, nodo_destino):
     # Hallaremos el nodo en el gráfico que está más cerca del punto de origen
     # (aquí, queremos obtener el ID del nodo)
@@ -167,6 +122,7 @@ def check_path(orig_node_id, target_node_id):
         global route
         route = nx.shortest_path(
             G=graph_proj, source=orig_node_id, target=target_node_id, weight='length')
+
     except nx.NetworkXNoPath:
         print(f"No se ha podido calcular el camino mínimo por el momento.\nIntente con otros nodos.")
         return False
@@ -266,6 +222,7 @@ def menu_opciones(coordenadas_inicio, nodo_inicio, nodo_destino, opcion=None):
         bgcolor = "#061529"
         ox.plot_graph_route(graph, route, bbox=bbox, route_linewidth=6,
                             node_size=0, bgcolor=bgcolor, dpi=300)
+
     elif opcion == 3:
         drawFolium.display_pyqt(area_especifica, nodo_inicio, nodo_destino)
 
@@ -274,8 +231,7 @@ def menu_opciones(coordenadas_inicio, nodo_inicio, nodo_destino, opcion=None):
     menu_opciones(coordenadas_inicio, nodo_inicio, nodo_destino, opcion)
 
 
-def menu_implementacion(opcion=None):
-    counter = 0
+def menu_implementacion():
     obtener_area_especifica()
     proyectar_grafo()
     nodo_inicio, coordenadas_inicio = input_nodo()
@@ -306,7 +262,7 @@ def menu_algoritmos(opcion=None):
 
     elif (opcion == 2):
         os.system("cls")
-        menu_implementacion(opcion=None)
+        menu_implementacion()
 
     elif (opcion == 3):
         ruta_selec().main()
