@@ -226,15 +226,6 @@ def plot_matplotlib():
     plt.show()
 
 
-def plot_background(coordenadas_inicio):
-    global bbox
-    bbox = ox.utils_geo.bbox_from_point(
-        point=(coordenadas_inicio[0], coordenadas_inicio[1]), dist=5000)
-    bgcolor = "#061529"
-    fig, ax = ox.plot_graph_route(
-        graph, route, bbox=bbox, route_linewidth=6, node_size=0, bgcolor=bgcolor, dpi=300)
-
-
 def medio_de_transporte():
     medio = int(input(
         "\nEn qué medio desea transportarse\n\t1. Caminando.\n\t2. Auto.\n\t3. Bicicleta.\n\t0. Salir\n\n\t--> "))
@@ -259,26 +250,7 @@ def medio_de_transporte():
     os.system("cls")'''
 
 
-def menu_implementacion(opcion=None):
-    obtener_area_especifica()
-    proyectar_grafo()
-    nodo_inicio, coordenadas_inicio = input_nodo()
-    nodo_destino, coordenadas_destino = input_nodo()
-    orig_node_id, target_node_id = ubicar_nearest_nodes(
-        nodo_inicio, nodo_destino)
-    filtrar_nodos(orig_node_id, target_node_id)
-    check_path(orig_node_id, target_node_id)
-    crear_dataframe_route()
-    plottear_elementos()
-
-    # Folium
-
-    # save_folium()
-    medio_transporte = medio_de_transporte()
-    drawFolium.save_map(coordenadas_area, coordenadas_inicio, coordenadas_destino,
-                        area_especifica, medio_transporte, nodo_inicio, nodo_destino)
-    os.system("cls")
-
+def menu_opciones(coordenadas_inicio, nodo_inicio, nodo_destino, opcion=None):
     if opcion is None:
         os.system("cls")
         opcion = int(input(
@@ -289,14 +261,39 @@ def menu_implementacion(opcion=None):
     elif opcion == 1:
         plot_matplotlib()
     elif opcion == 2:
-        plot_background()
+        bbox = ox.utils_geo.bbox_from_point(
+            point=(coordenadas_inicio[0], coordenadas_inicio[1]), dist=5000)
+        bgcolor = "#061529"
+        ox.plot_graph_route(graph, route, bbox=bbox, route_linewidth=6,
+                            node_size=0, bgcolor=bgcolor, dpi=300)
     elif opcion == 3:
-        drawFolium.show_pyqt()
         drawFolium.display_pyqt(area_especifica, nodo_inicio, nodo_destino)
 
     opcion = int(input(
         "\n\n\t1. Mostrar matplotlib.\n\t2. Mostrar background\n\t3. Mostrar folium.\n\t0. Salir\n\n\t--> "))
-    menu_implementacion(opcion)
+    menu_opciones(coordenadas_inicio, nodo_inicio, nodo_destino, opcion)
+
+
+def menu_implementacion(opcion=None):
+    counter = 0
+    obtener_area_especifica()
+    proyectar_grafo()
+    nodo_inicio, coordenadas_inicio = input_nodo()
+    nodo_destino, coordenadas_destino = input_nodo()
+    medio_transporte = medio_de_transporte()
+    orig_node_id, target_node_id = ubicar_nearest_nodes(
+        nodo_inicio, nodo_destino)
+    filtrar_nodos(orig_node_id, target_node_id)
+    check_path(orig_node_id, target_node_id)
+    crear_dataframe_route()
+    plottear_elementos()
+
+    # save_folium()
+    drawFolium.save_map(coordenadas_area, coordenadas_inicio, coordenadas_destino,
+                        area_especifica, medio_transporte, nodo_inicio, nodo_destino)
+    os.system("cls")
+
+    menu_opciones(coordenadas_inicio, nodo_inicio, nodo_destino, opcion=None)
 
 
 def menu_algoritmos(opcion=None):
@@ -309,7 +306,7 @@ def menu_algoritmos(opcion=None):
 
     elif (opcion == 2):
         os.system("cls")
-        menu_implementacion()
+        menu_implementacion(opcion=None)
 
     elif (opcion == 3):
         ruta_selec().main()
@@ -319,4 +316,4 @@ def menu_algoritmos(opcion=None):
     menu_algoritmos(new_opcion)
 
 
-menu_algoritmos()
+menu_algoritmos(opcion=None)

@@ -124,6 +124,7 @@ class drawFolium():
         '''if not os.path.exists(area_especifica):
             os.makedirs(area_especifica)'''
 
+        # implementar funcion de comparacion de nombres de archivos
         mapaFolium.save(f"{area_especifica}.html")
         ''' global area_esp, ini, des
         area_esp = area_especifica
@@ -136,7 +137,7 @@ class drawFolium():
             'Trayecto mínimo - Implementación Dijkstra Algorithm - Grupo 4 ADA')
         view = QWebEngineView()
 
-        with open(f'{area_especifica}/{nodo_inicio}-{nodo_destino}.html', 'r') as f:
+        with open(f'{area_especifica}.html', 'r') as f:
             html = f.read()
 
         view.setHtml(html)
