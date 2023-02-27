@@ -121,26 +121,19 @@ class drawFolium():
         folium.Marker(location=punto_origen, icon=None).add_to(mapaFolium)
         folium.Marker(location=punto_destino, icon=None).add_to(mapaFolium)
 
-        if not os.path.exists(area_especifica):
-            os.makedirs(area_especifica)
+        '''if not os.path.exists(area_especifica):
+            os.makedirs(area_especifica)'''
 
-        mapaFolium.save(
-            f"{area_especifica}/{nodo_inicio}-{nodo_destino_para}.html")
-        global area_esp, ini, des
+        mapaFolium.save(f"{area_especifica}.html")
+        ''' global area_esp, ini, des
         area_esp = area_especifica
-        ini, des = nodo_inicio, nodo_destino_para
+        ini, des = nodo_inicio, nodo_destino_para'''
 
-    def show_pyqt():
-        display_pyqt.main(area_esp, ini, des)
-        os.system("cls")
-
-
-class display_pyqt():
-    def main(area_especifica, nodo_inicio, nodo_destino):
+    def display_pyqt(area_especifica, nodo_inicio, nodo_destino):
         app = QApplication(sys.argv)
         window = QWidget()
         window.setWindowTitle(
-            'Trayecto mínimo - Implementación Dijkstra Algorithm - Grupo 3')
+            'Trayecto mínimo - Implementación Dijkstra Algorithm - Grupo 4 ADA')
         view = QWebEngineView()
 
         with open(f'{area_especifica}/{nodo_inicio}-{nodo_destino}.html', 'r') as f:

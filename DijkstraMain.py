@@ -1,10 +1,12 @@
 import copy
 from DijkstraBaseCode import *
 
-def grafica():
-        pass
 
-def verificar(lista, a, b ):
+def grafica():
+    pass
+
+
+def verificar(lista, a, b):
     if a and b in lista:
         return True
     else:
@@ -22,8 +24,8 @@ def origen_destino(g):
     guardar.dijkstra(origen)
     return print(guardar.caminos(destino))
 
+
 class display_dijkstra():
-    
     def main():
         g = Grafo()
         # Agregar ciudades
@@ -49,11 +51,12 @@ class display_dijkstra():
                 ciudad2 = input('Ingrese la segunda ciudad: ')
                 veri = verificar(Ciudades, ciudad1, ciudad2)
 
-            distancia = int(input('Ingrese la distancia en kilometros entre las ciudades: '))
+            distancia = int(
+                input('Ingrese la distancia en kilometros entre las ciudades: '))
             g.agregar_aristas(ciudad1, ciudad2, distancia)
 
             sino = input('¿Desea continuar? (S/N) --> ')
-            while sino not in ['S','s','N','n']:
+            while sino not in ['S', 's', 'N', 'n']:
                 sino = input("Introducir valor correcto: (S/N) --> ")
 
         g.mostrar_grafica()
@@ -64,6 +67,5 @@ class display_dijkstra():
             copia = copy.deepcopy(g)
             origen_destino(copia)
             sino = input('¿Desea ingresar otros datos? (S/N) --> ')
-            while sino not in ['S','s','N','n']:
+            while sino not in ['S', 's', 'N', 'n']:
                 sino = input("Introducir valor correcto: (S/N) --> ")
-

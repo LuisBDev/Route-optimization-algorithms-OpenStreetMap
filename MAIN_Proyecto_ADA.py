@@ -13,8 +13,34 @@ from Localizacion import *
 from DijkstraMain import *
 from SeleccionRuta import *
 
+
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.simplefilter("ignore", UserWarning)
+
+
+def input_nodo():
+    # Pedir al usuario que ingrese el nodo de inicio.
+
+    # Mostramos las sugerencias de búsqueda y guardamos tanto como las coordenadas y el nombre del nodo de inicio.
+    nodo_nombre = input(
+        f"\n##### [BÚSQUEDA DE NODO.] #####\n\t --> ")
+    nodo_nombre, coordenadas_nodo = Localizar.busqueda_sugerencias(
+        nodo_nombre)
+    print(coordenadas_nodo)
+
+    return nodo_nombre, coordenadas_nodo
+
+
+def nodo_geocodificar(nodo_nombre):
+    # Geocodificar el nombre del lugar
+    geocoded_place = ox.geocode_to_gdf(nodo_nombre, which_result=1)
+
+    # Re-proyectar en el mismo CRS que la red vial
+    geocoded_place = geocoded_place.to_crs(CRS(edges_proj.crs))
+
+    nodo_geocoded = geocoded_place["geometry"].centroid.values[0]
+
+    return nodo_geocoded
 
 
 def obtener_area_especifica():
@@ -27,26 +53,6 @@ def obtener_area_especifica():
 
     print(
         f"Coordenadas area_especifica: {coordenadas_area[0],coordenadas_area[1]}")
-
-
-def menu_implementacion(opcion=None):
-    if opcion is None:
-        os.system("cls")
-        opcion = int(input(
-            "\n\n\t1. Mostrar matplotlib.\n\t2. Mostrar background\n\t3. Mostrar folium.\n\t0. Salir\n\n\t--> "))
-
-    if opcion == 0:
-        sys.exit()
-    elif opcion == 1:
-        plot_matplotlib()
-    elif opcion == 2:
-        plot_background()
-    elif opcion == 3:
-        drawFolium.show_pyqt()
-
-    opcion = int(input(
-        "\n\n\t1. Mostrar matplotlib.\n\t2. Mostrar background\n\t3. Mostrar folium.\n\t0. Salir\n\n\t--> "))
-    menu_implementacion(opcion)
 
 
 def proyectar_grafo():
@@ -83,6 +89,7 @@ def proyectar_grafo():
         graph_proj, nodes=True, edges=True)
 
 
+'''
 def input_origen():
     # Pedir al usuario que ingrese el nodo de inicio.
 
@@ -91,7 +98,7 @@ def input_origen():
     inicio = input("\n##### [BÚSQUEDA DEL NODO DE ORIGEN.] #####\n\t --> ")
     nodo_inicio, coordenadas_inicio = Localizar.busqueda_sugerencias(inicio)
 
-    print(coordenadas_inicio)  # Imprimir coordenadas del nodo de inicio
+    print(coordenadas_inicio)
 
     # Geocodificar el nombre del lugar
     geocoded_place = ox.geocode_to_gdf(nodo_inicio, which_result=1)
@@ -124,24 +131,27 @@ def input_destino():
     global destination
     destination = geocoded_place["geometry"].centroid.values[0]
 
+'''
 
-def ubicar_nearest_nodes():
+
+def ubicar_nearest_nodes(nodo_origen, nodo_destino):
     # Hallaremos el nodo en el gráfico que está más cerca del punto de origen
     # (aquí, queremos obtener el ID del nodo)
-    global orig_node_id
+
+    origin = nodo_geocodificar(nodo_origen)
     orig_node_id = ox.nearest_nodes(graph_proj, origin.x, origin.y)
     print(f"\n------> ID Nodo Origen: {orig_node_id}")
 
     # Hallaremos el nodo en el gráfico que está más cerca del punto de destino
     # (aquí, queremos obtener el ID del nodo)
-    global target_node_id
+    destination = nodo_geocodificar(nodo_destino)
     target_node_id = ox.nearest_nodes(graph_proj, destination.x, destination.y)
     print(f"\n------> ID Nodo Destino: {target_node_id}")
-
+    return orig_node_id, target_node_id
 ################################################################################################
 
 
-def filtrar_nodos():
+def filtrar_nodos(orig_node_id, target_node_id):
     orig_node = nodes_proj.loc[orig_node_id]
     target_node = nodes_proj.loc[target_node_id]
 
@@ -151,7 +161,7 @@ def filtrar_nodos():
         [orig_node, target_node], geometry='geometry', crs=nodes_proj.crs)
 
 
-def check_path():
+def check_path(orig_node_id, target_node_id):
     # Verificar si existe un path y luego calcular el shortest path
     try:
         global route
@@ -216,7 +226,7 @@ def plot_matplotlib():
     plt.show()
 
 
-def plot_background():
+def plot_background(coordenadas_inicio):
     global bbox
     bbox = ox.utils_geo.bbox_from_point(
         point=(coordenadas_inicio[0], coordenadas_inicio[1]), dist=5000)
@@ -241,30 +251,52 @@ def medio_de_transporte():
         return medio_de_transporte()
 
 
-def save_folium():
+'''def save_folium(coordenadas_inicio, coordenadas_destino, area_especifica, nodo_inicio, nodo_destino):
     # ox.config(use_cache=True)
     medio = medio_de_transporte()
     drawFolium.save_map(coordenadas_area, coordenadas_inicio,
                         coordenadas_destino, area_especifica, medio, nodo_inicio, nodo_destino)
-    os.system("cls")
+    os.system("cls")'''
 
 
-def implementacion_vial():
+def menu_implementacion(opcion=None):
     obtener_area_especifica()
     proyectar_grafo()
-    input_origen()
-    input_destino()
-    ubicar_nearest_nodes()
-    filtrar_nodos()
-    check_path()
+    nodo_inicio, coordenadas_inicio = input_nodo()
+    nodo_destino, coordenadas_destino = input_nodo()
+    orig_node_id, target_node_id = ubicar_nearest_nodes(
+        nodo_inicio, nodo_destino)
+    filtrar_nodos(orig_node_id, target_node_id)
+    check_path(orig_node_id, target_node_id)
     crear_dataframe_route()
     plottear_elementos()
 
     # Folium
 
-    save_folium()
+    # save_folium()
+    medio_transporte = medio_de_transporte()
+    drawFolium.save_map(coordenadas_area, coordenadas_inicio, coordenadas_destino,
+                        area_especifica, medio_transporte, nodo_inicio, nodo_destino)
+    os.system("cls")
 
-    # Matplotlib
+    if opcion is None:
+        os.system("cls")
+        opcion = int(input(
+            "\n\n\t1. Mostrar matplotlib.\n\t2. Mostrar background\n\t3. Mostrar folium.\n\t0. Salir\n\n\t--> "))
+
+    if opcion == 0:
+        sys.exit()
+    elif opcion == 1:
+        plot_matplotlib()
+    elif opcion == 2:
+        plot_background()
+    elif opcion == 3:
+        drawFolium.show_pyqt()
+        drawFolium.display_pyqt(area_especifica, nodo_inicio, nodo_destino)
+
+    opcion = int(input(
+        "\n\n\t1. Mostrar matplotlib.\n\t2. Mostrar background\n\t3. Mostrar folium.\n\t0. Salir\n\n\t--> "))
+    menu_implementacion(opcion)
 
 
 def menu_algoritmos(opcion=None):
@@ -276,15 +308,14 @@ def menu_algoritmos(opcion=None):
         os.system("cls")
 
     elif (opcion == 2):
-        implementacion_vial()
         os.system("cls")
         menu_implementacion()
 
     elif (opcion == 3):
         ruta_selec().main()
 
-    new_opcion = int(input("\nSeleccionar el grafo a implementar:\n\n\t1. Dijkstra\n\t"
-                           "2. Implementacion Vial\n\t3. Mejor ruta\n\t0. Salir de la aplicacion.\n\n\t\t---> "))
+    new_opcion = int(input(
+        "\nSeleccionar el grafo a implementar:\n\n\t1. Dijkstra\n\t""2. Implementacion Vial\n\t3. Mejor ruta\n\t0. Salir de la aplicacion.\n\n\t\t---> "))
     menu_algoritmos(new_opcion)
 
 
