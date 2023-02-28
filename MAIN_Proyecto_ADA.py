@@ -246,7 +246,7 @@ def menu_implementacion():
 
     # save_folium()
     drawFolium.save_map(coordenadas_area, coordenadas_inicio, coordenadas_destino,
-                        area_especifica, medio_transporte, nodo_inicio, nodo_destino)
+                        area_especifica, medio_transporte)
     os.system("cls")
 
     menu_opciones(coordenadas_inicio, nodo_inicio, nodo_destino, opcion=None)
