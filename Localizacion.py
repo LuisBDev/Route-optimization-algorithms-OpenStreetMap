@@ -1,67 +1,59 @@
 import sys
 import os
 import osmnx as ox
-import networkx as nx
-import geopandas as gpd
-import matplotlib.pyplot as plt
-import pandas as pd
-from pyproj import CRS
-import contextily as ctx
 import warnings
-from shapely.geometry import LineString, Point
-from geopy.geocoders import Nominatim
 import folium
 import requests
 from requests.structures import CaseInsensitiveDict
 import sys
-
+from geopy.geocoders import Nominatim
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QVBoxLayout
-from PyQt5.QtWebEngineWidgets import QWebEngineView  # pip install PyQtWebEngine
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout
+from PyQt5.QtWebEngineWidgets import QWebEngineView # pip install PyQtWebEngine
 
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.simplefilter("ignore", UserWarning)
 
+import requests
+import json
 
 class Localizar():
-
-    def search_suggestions(location):
-        suggestions = []
-        counter = 0
-        while len(suggestions) == 0:
-            if len(suggestions) == 0 and counter > 0:
-                location = input("\n\tIntroducir un area_especifica --> ")
+    
+    def search_suggestions(self,location=None,flag=False):
+        
+        while True:
+            if not flag:
+                location = input("\nIntroduce una ubicación para buscar sugerencias -> ")
             myjson = search_api(location)
+            suggestions = []
             for i in range(len(myjson["features"])):
                 if myjson["features"][i]["properties"]["country"] == "Peru":
                     address_line1 = myjson["features"][i]["properties"]["address_line1"]
                     formatted = myjson["features"][i]["properties"]["formatted"]
-                    print(f"\nSugerencia N°{i+1}: --> {formatted}")
                     suggestions.append(address_line1)
-            counter += 1
-        selected = int(input("\n\tSeleccionar N° de Sugerencia -> : "))
-        while selected > len(suggestions) or selected < 0:
-            print("\nSeleccione un valor correcto..")
-            selected = int(input("\nSeleccionar N° de Sugerencia -> : "))
-        latitude = myjson["features"][selected -
-                                      1]["geometry"]["coordinates"][1]
-        longitude = myjson["features"][selected -
-                                       1]["geometry"]["coordinates"][0]
-        coordinates = [latitude, longitude]
-        print(
-            f"\n\tHas seleccionado la sugerencia {selected} para el nodo.\n")
+                    print(f"\nSugerencia N°{len(suggestions)}: --> {formatted}")
+            if len(suggestions) == 0:
+                print("\nLo siento, no se encontraron sugerencias para esa ubicación. Inténtalo de nuevo.")
+            else:
+                selected = int(input("\nSelecciona el número de sugerencia que deseas usar -> "))
+                while selected > len(suggestions) or selected < 1:
+                    print("\nSelecciona un número de sugerencia válido.")
+                    selected = int(input("\nSelecciona el número de sugerencia que deseas usar -> "))
+                latitude = myjson["features"][selected - 1]["geometry"]["coordinates"][1]
+                longitude = myjson["features"][selected - 1]["geometry"]["coordinates"][0]
+                coordinates = [latitude, longitude]
+                print(f"\nHas seleccionado la sugerencia {selected} para el nodo.")
+                return suggestions[selected - 1], coordinates
+            flag = True
 
-        return suggestions[selected - 1], coordinates
-
-    def area_especifica(area):
-
-        sugerencias, coordenadas = Localizar.search_suggestions(area)
+    def area_especifica(self, area):
+        sugerencias, coordenadas = self.search_suggestions(area,flag=True)
         print(f"\n\tHas seleccionado el area especifica: {sugerencias}.\n")
         return area, coordenadas
 
-    def busqueda_sugerencias(lugar):
-        location, coordinates = Localizar.search_suggestions(lugar)
+    def busqueda_sugerencias(self):
+        location, coordinates = self.search_suggestions()
         suggestions = [location]
         return suggestions[0], coordinates
 
@@ -105,7 +97,7 @@ class drawFolium():
         area_esp = area_especifica
         ini, des = nodo_inicio, nodo_destino_para'''
 
-    def display_pyqt(area_especifica, nodo_inicio, nodo_destino):
+    def display_pyqt(area_especifica):
         app = QApplication(sys.argv)
         window = QWidget()
         window.setWindowTitle(

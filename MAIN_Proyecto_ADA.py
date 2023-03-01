@@ -22,10 +22,9 @@ def input_nodo():
     # Pedir al usuario que ingrese el nodo de inicio.
 
     # Mostramos las sugerencias de búsqueda y guardamos tanto como las coordenadas y el nombre del nodo de inicio.
-    nodo_nombre = input(
-        f"\n##### [BÚSQUEDA DE NODO.] #####\n\t --> ")
-    nodo_nombre, coordenadas_nodo = Localizar.busqueda_sugerencias(
-        nodo_nombre)
+    print("\n##### [BÚSQUEDA DE NODO.] #####\n\t --> ")
+    localizar = Localizar()
+    nodo_nombre, coordenadas_nodo = localizar.search_suggestions()
     print(coordenadas_nodo)
 
     return nodo_nombre, coordenadas_nodo
@@ -44,15 +43,14 @@ def nodo_geocodificar(nodo_nombre):
 
 
 def obtener_area_especifica():
-
     print("\n##### [BÚSQUEDA ÁREA ESPECÍFICA.] #####")
     area = input("\n\tIntroducir area_especifica --> ")
+    localizar = Localizar()
     global area_especifica
     global coordenadas_area
-    area_especifica, coordenadas_area = Localizar.area_especifica(area)
+    area_especifica, coordenadas_area = localizar.area_especifica(area) 
 
-    print(
-        f"Coordenadas area_especifica: {coordenadas_area[0],coordenadas_area[1]}")
+    print(f"Coordenadas area_especifica: {coordenadas_area[0],coordenadas_area[1]}")
 
 
 def proyectar_grafo():
@@ -224,7 +222,7 @@ def menu_opciones(coordenadas_inicio, nodo_inicio, nodo_destino, opcion=None):
                             node_size=0, bgcolor=bgcolor, dpi=300)
 
     elif opcion == 3:
-        drawFolium.display_pyqt(area_especifica, nodo_inicio, nodo_destino)
+        drawFolium.display_pyqt(area_especifica)
 
     opcion = int(input(
         "\n\n\t1. Mostrar matplotlib.\n\t2. Mostrar background\n\t3. Mostrar folium.\n\t0. Salir\n\n\t--> "))
