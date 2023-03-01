@@ -222,7 +222,7 @@ def menu_opciones(coordenadas_inicio, area_especifica, opcion=None):
                             node_size=0, bgcolor=bgcolor, dpi=300)
 
     elif opcion == 3:
-        drawFolium.display_pyqt(area_especifica)
+        drawFolium.display_pyqt()
 
     opcion = int(input(
         "\n\n\t1. Mostrar matplotlib.\n\t2. Mostrar background\n\t3. Mostrar folium.\n\t0. Salir\n\n\t--> "))
@@ -244,9 +244,9 @@ def menu_implementacion():
     plottear_elementos(area_especifica)
 
     # save_folium()
-    drawFolium.save_map(coordenadas_area, coordenadas_inicio,
+    drawFolium.save_map(nodo_inicio, nodo_destino, coordenadas_area, coordenadas_inicio,
                         coordenadas_destino, area_especifica, medio_transporte)
-    os.system("cls")
+    # os.system("cls")
 
     menu_opciones(coordenadas_inicio, area_especifica, opcion=None)
 
@@ -260,7 +260,7 @@ def menu_algoritmos(opcion=None):
         os.system("cls")
 
     elif (opcion == 2):
-        os.system("cls")
+        # os.system("cls")
         menu_implementacion()
 
     elif (opcion == 3):

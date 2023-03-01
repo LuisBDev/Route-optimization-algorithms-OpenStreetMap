@@ -1,6 +1,8 @@
-import json
 import sys
 import os
+import random
+import difflib
+from pathlib import Path
 import osmnx as ox
 import warnings
 import folium
@@ -15,6 +17,63 @@ from PyQt5.QtWebEngineWidgets import QWebEngineView  # pip install PyQtWebEngine
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.simplefilter("ignore", UserWarning)
+
+
+class algoritmoBusqueda():
+
+    def quickselect_median(self, l):
+        if len(l) % 2 == 1:
+            return self.quickselect(l, len(l) // 2)
+        else:
+            return 0.5 * (self.quickselect(l, len(l) // 2 - 1) +
+                          self.quickselect(l, len(l) // 2))
+
+    def quickselect(self, l, left, right, k):
+        if left == right:
+            return l[left]
+
+        pivot_index = random.randint(left, right)
+
+        pivot = l[pivot_index]
+
+        l[pivot_index], l[right] = l[right], l[pivot_index]
+
+        store_index = left
+
+        for i in range(left, right):
+            if l[i] < pivot:
+                l[store_index], l[i] = l[i], l[store_index]
+                store_index += 1
+
+        l[right], l[store_index] = l[store_index], l[right]
+
+        if k == store_index:
+            return pivot
+        elif k < store_index:
+            return self.quickselect(l, left, store_index - 1, k)
+        else:
+            return self.quickselect(l, store_index + 1, right, k)
+
+    def buscar_carpeta(self, nombre_busqueda, path):
+        similitudes = []
+        for nombre_carpeta in os.listdir(path):
+            similitud = difflib.SequenceMatcher(
+                None, nombre_busqueda, nombre_carpeta).ratio()
+            if similitud >= 0.7:
+                similitudes.append(similitud)
+
+        if len(similitudes) > 0:
+            algoritmo = algoritmoBusqueda()
+            k = int(algoritmo.quickselect(similitudes, 0, len(
+                similitudes)-1, len(similitudes)-1) * len(similitudes))
+            carpeta_max_similitud = [nombre for nombre in os.listdir(
+                path) if difflib.SequenceMatcher(None, nombre_busqueda, nombre).ratio() >= 0.7][k]
+            ruta_carpeta = os.path.join(path, carpeta_max_similitud)
+
+            # os.path.join(ruta_carpeta, nombre_archivo)
+            # print(f"Se ha guardado el archivo 'mi_archivo.txt' en la carpeta '{carpeta_max_similitud}' "
+            #      f"que coincide en un {similitudes[k]*100:.2f}% con {nombre_busqueda}.")
+            return ruta_carpeta, similitudes[k]*100
 
 
 class Localizar():
@@ -68,7 +127,7 @@ class Localizar():
 
 class drawFolium():
     @staticmethod
-    def save_map(coordenadas_area, coordenadas_inicio, coordenadas_destino, area_especifica, medio):
+    def save_map(nombre_inicio, nombre_destino, coordenadas_area, coordenadas_inicio, coordenadas_destino, area_especifica, medio):
         G = ox.graph_from_point(
             coordenadas_area, dist=5000, simplify=True, network_type=medio)
         punto_origen = (coordenadas_inicio[0], coordenadas_inicio[1])
@@ -96,23 +155,36 @@ class drawFolium():
         # get the address of the starting and ending points
         # add markers for starting and ending points with popups showing the address
 
-        '''if not os.path.exists(area_especifica):
-            os.makedirs(area_especifica)'''
-
         # implementar funcion de comparacion de nombres de archivos
-        mapaFolium.save(f"{area_especifica}.html")
+        path = Path(__file__).resolve().parent
+        algoritmo = algoritmoBusqueda()
+        global ruta_archivo
+        nombre_archivo = f"{nombre_inicio} - {nombre_destino}.html"
+        ruta_carpeta, porcentaje_similitud = algoritmo.buscar_carpeta(
+            area_especifica, path)
+        # ruta_archivo = os.path.join(ruta_carpeta, nombre_archivo)
+
+        if porcentaje_similitud < 70:
+            os.makedirs(area_especifica)
+            mapaFolium.save(f"{area_especifica}/{nombre_archivo}")
+
+        else:
+            print(f"Se ha guardado el archivo '{nombre_archivo}' en la carpeta '{area_especifica}' "
+                  f"que coincide en un {porcentaje_similitud:.2f}% con nombre {nombre_inicio} - {nombre_destino}.")
+            mapaFolium.save(f"{ruta_carpeta}/{nombre_archivo}")
+
         ''' global area_esp, ini, des
         area_esp = area_especifica
         ini, des = nodo_inicio, nodo_destino_para'''
 
-    def display_pyqt(area_especifica):
+    def display_pyqt():
         app = QApplication(sys.argv)
         window = QWidget()
         window.setWindowTitle(
             'Trayecto mínimo - Implementación Dijkstra Algorithm - Grupo 4 ADA')
         view = QWebEngineView()
 
-        with open(f'{area_especifica}.html', 'r') as f:
+        with open(ruta_archivo, 'r') as f:
             html = f.read()
 
         view.setHtml(html)
