@@ -23,10 +23,10 @@ def input_nodo():
 
     # Mostramos las sugerencias de búsqueda y guardamos tanto como las coordenadas y el nombre del nodo de inicio.
     print("\n##### [BÚSQUEDA DE NODO.] #####\n\t --> ")
+    nodo_nombre = input("\tIntroducir nodo --> ")
     localizar = Localizar()
-    nodo_nombre, coordenadas_nodo = localizar.search_suggestions()
+    nodo_nombre, coordenadas_nodo = localizar.busqueda_sugerencias(nodo_nombre)
     print(coordenadas_nodo)
-
     return nodo_nombre, coordenadas_nodo
 
 
@@ -46,14 +46,14 @@ def obtener_area_especifica():
     print("\n##### [BÚSQUEDA ÁREA ESPECÍFICA.] #####")
     area = input("\n\tIntroducir area_especifica --> ")
     localizar = Localizar()
-    global area_especifica
-    global coordenadas_area
-    area_especifica, coordenadas_area = localizar.area_especifica(area) 
+    area_especifica, coordenadas_area = localizar.area_especifica(area)
+    print(
+        f"Coordenadas area_especifica: {coordenadas_area[0],coordenadas_area[1]}")
 
-    print(f"Coordenadas area_especifica: {coordenadas_area[0],coordenadas_area[1]}")
+    return area_especifica, coordenadas_area
 
 
-def proyectar_grafo():
+def proyectar_grafo(area_especifica):
     global graph
     graph = ox.graph_from_place(area_especifica, network_type='drive')
 
@@ -144,7 +144,7 @@ def crear_dataframe_route():
         [[route_line]], geometry='geometry', crs=edges_proj.crs, columns=['geometry'])
 
 
-def plottear_elementos():
+def plottear_elementos(area_especifica):
     # Aqui se puede agregar mas tags.
     tags = {'building': True}
 
@@ -204,7 +204,7 @@ def medio_de_transporte():
     os.system("cls")'''
 
 
-def menu_opciones(coordenadas_inicio, nodo_inicio, nodo_destino, opcion=None):
+def menu_opciones(coordenadas_inicio, area_especifica, opcion=None):
     if opcion is None:
         os.system("cls")
         opcion = int(input(
@@ -226,12 +226,13 @@ def menu_opciones(coordenadas_inicio, nodo_inicio, nodo_destino, opcion=None):
 
     opcion = int(input(
         "\n\n\t1. Mostrar matplotlib.\n\t2. Mostrar background\n\t3. Mostrar folium.\n\t0. Salir\n\n\t--> "))
-    menu_opciones(coordenadas_inicio, nodo_inicio, nodo_destino, opcion)
+    menu_opciones(coordenadas_inicio, area_especifica, opcion)
 
 
 def menu_implementacion():
-    obtener_area_especifica()
-    proyectar_grafo()
+    # obtener_area_especifica()
+    area_especifica, coordenadas_area = obtener_area_especifica()
+    proyectar_grafo(area_especifica)
     nodo_inicio, coordenadas_inicio = input_nodo()
     nodo_destino, coordenadas_destino = input_nodo()
     medio_transporte = medio_de_transporte()
@@ -240,14 +241,14 @@ def menu_implementacion():
     filtrar_nodos(orig_node_id, target_node_id)
     check_path(orig_node_id, target_node_id)
     crear_dataframe_route()
-    plottear_elementos()
+    plottear_elementos(area_especifica)
 
     # save_folium()
-    drawFolium.save_map(coordenadas_area, coordenadas_inicio, coordenadas_destino,
-                        area_especifica, medio_transporte)
+    drawFolium.save_map(coordenadas_area, coordenadas_inicio,
+                        coordenadas_destino, area_especifica, medio_transporte)
     os.system("cls")
 
-    menu_opciones(coordenadas_inicio, nodo_inicio, nodo_destino, opcion=None)
+    menu_opciones(coordenadas_inicio, area_especifica, opcion=None)
 
 
 def menu_algoritmos(opcion=None):
