@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 from Ruta import *
 
 
@@ -35,8 +36,18 @@ class ruta_selec():
             tiempo = int(input("Tiempo de la ruta: "))
             seleccionador.agregar_ruta(distancia, tiempo)
         rutas_seleccionadas, tiempo_total = seleccionador.seleccionar_rutas_voraz()
+        distancias = []
+        tiempos = []
         print("Rutas seleccionadas:")
         for ruta in rutas_seleccionadas:
-            print(
-                f"- Ruta de distancia {ruta.distancia} y tiempo {ruta.tiempo}")
+            distancias.append(ruta.distancia)
+            tiempos.append(ruta.tiempo)
+            print(f"- Ruta de distancia {ruta.distancia} y tiempo {ruta.tiempo}")
+        distancias, tiempos = zip(*sorted(zip(distancias, tiempos), key=lambda x: x[1]))
+        fig, ax = plt.subplots()
+        ax.plot(distancias, tiempos, 'o-')
+        ax.set_xlabel('Distancia de la ruta')
+        ax.set_ylabel('Tiempo de la ruta')
+        ax.set_title('Rutas seleccionadas')
+        plt.show()
         print(f"Tiempo total: {tiempo_total}")
