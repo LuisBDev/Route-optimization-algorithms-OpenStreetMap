@@ -158,11 +158,11 @@ class drawFolium():
         # implementar funcion de comparacion de nombres de archivos
         path = Path(__file__).resolve().parent
         algoritmo = algoritmoBusqueda()
-        global ruta_archivo
+        global ruta_carpeta, ruta_archivo
         nombre_archivo = f"{nombre_inicio} - {nombre_destino}.html"
         ruta_carpeta, porcentaje_similitud = algoritmo.buscar_carpeta(
             area_especifica, path)
-        # ruta_archivo = os.path.join(ruta_carpeta, nombre_archivo)
+        ruta_archivo = os.path.join(ruta_carpeta, nombre_archivo)
 
         if porcentaje_similitud < 70:
             os.makedirs(area_especifica)
