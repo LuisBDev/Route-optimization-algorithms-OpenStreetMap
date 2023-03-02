@@ -21,41 +21,38 @@ warnings.simplefilter("ignore", UserWarning)
 
 class algoritmoBusqueda():
 
-    def quickselect_median(self, l):
-        if len(l) % 2 == 1:
-            return self.quickselect(l, len(l) // 2)
-        else:
-            return 0.5 * (self.quickselect(l, len(l) // 2 - 1) +
-                          self.quickselect(l, len(l) // 2))
+    def quickselect(self, list, left_idx, right_idx, kth_smallest):
+        if left_idx == right_idx:
+            return list[left_idx]
 
-    def quickselect(self, l, left, right, k):
-        if left == right:
-            return l[left]
+        pivot_idx = random.randint(left_idx, right_idx)
 
-        pivot_index = random.randint(left, right)
+        pivot = list[pivot_idx]
 
-        pivot = l[pivot_index]
+        list[pivot_idx], list[right_idx] = list[right_idx], list[pivot_idx]
 
-        l[pivot_index], l[right] = l[right], l[pivot_index]
+        store_idx = left_idx
 
-        store_index = left
+        for i in range(left_idx, right_idx):
+            if list[i] < pivot:
+                list[store_idx], list[i] = list[i], list[store_idx]
+                store_idx += 1
 
-        for i in range(left, right):
-            if l[i] < pivot:
-                l[store_index], l[i] = l[i], l[store_index]
-                store_index += 1
+        list[right_idx], list[store_idx] = list[store_idx], list[right_idx]
 
-        l[right], l[store_index] = l[store_index], l[right]
-
-        if k == store_index:
+        if kth_smallest == store_idx:
             return pivot
-        elif k < store_index:
-            return self.quickselect(l, left, store_index - 1, k)
+        elif kth_smallest < store_idx:
+            return self.quickselect(list, left_idx, store_idx - 1, kth_smallest)
         else:
-            return self.quickselect(l, store_index + 1, right, k)
+            return self.quickselect(list, store_idx + 1, right_idx, kth_smallest)
 
     def buscar_carpeta(self, nombre_busqueda, path):
         similitudes = []
+        for carpeta in os.listdir(path):
+            if carpeta == nombre_busqueda:
+                return path, 100
+
         for nombre_carpeta in os.listdir(path):
             similitud = difflib.SequenceMatcher(
                 None, nombre_busqueda, nombre_carpeta).ratio()
@@ -70,9 +67,6 @@ class algoritmoBusqueda():
                 path) if difflib.SequenceMatcher(None, nombre_busqueda, nombre).ratio() >= 0.7][k]
             ruta_carpeta = os.path.join(path, carpeta_max_similitud)
 
-            # os.path.join(ruta_carpeta, nombre_archivo)
-            # print(f"Se ha guardado el archivo 'mi_archivo.txt' en la carpeta '{carpeta_max_similitud}' "
-            #      f"que coincide en un {similitudes[k]*100:.2f}% con {nombre_busqueda}.")
             return ruta_carpeta, similitudes[k]*100
         else:
             print("No se encontró ninguna carpeta que coincida con la búsqueda.")
@@ -155,10 +149,6 @@ class drawFolium():
         folium.Marker(location=punto_destino, icon=folium.Icon(
             color='blue', icon='flag'), popup=location_destino.address).add_to(mapaFolium)
 
-        # get the address of the starting and ending points
-        # add markers for starting and ending points with popups showing the address
-
-        # implementar funcion de comparacion de nombres de archivos
         path = Path(__file__).resolve().parent
         algoritmo = algoritmoBusqueda()
         global ruta_carpeta, ruta_archivo
@@ -166,7 +156,11 @@ class drawFolium():
         ruta_carpeta, porcentaje_similitud = algoritmo.buscar_carpeta(
             area_especifica, path)
 
-        if porcentaje_similitud < 65 or ruta_carpeta is None:
+        if (porcentaje_similitud == 100):
+            ruta_archivo = f"{path}/{area_especifica}/{nombre_archivo}"
+            mapaFolium.save(ruta_archivo)
+
+        elif porcentaje_similitud < 70 or ruta_carpeta is None:
             ruta_archivo = os.path.join(
                 f"{path}/{area_especifica}", nombre_archivo)
             os.makedirs(area_especifica)

@@ -3,12 +3,10 @@ import osmnx as ox
 import networkx as nx
 import geopandas as gpd
 import matplotlib.pyplot as plt
-import pandas as pd
 from pyproj import CRS
 import contextily as ctx
 import warnings
-from shapely.geometry import LineString, Point
-import folium
+from shapely.geometry import LineString
 from Localizacion import *
 from DijkstraMain import *
 from SeleccionRuta import *
@@ -19,14 +17,12 @@ warnings.simplefilter("ignore", UserWarning)
 
 
 def input_nodo():
-    # Pedir al usuario que ingrese el nodo de inicio.
 
-    # Mostramos las sugerencias de búsqueda y guardamos tanto como las coordenadas y el nombre del nodo de inicio.
     print("\n##### [BÚSQUEDA DE NODO.] #####\n\t --> ")
     nodo_nombre = input("\tIntroducir nodo --> ")
     localizar = Localizar()
     nodo_nombre, coordenadas_nodo = localizar.busqueda_sugerencias(nodo_nombre)
-    print(coordenadas_nodo)
+    print(f"Nodo: {nodo_nombre} - Coordenadas: {coordenadas_nodo}")
     return nodo_nombre, coordenadas_nodo
 
 
@@ -126,9 +122,6 @@ def check_path(orig_node_id, target_node_id):
         return False
     else:
         return True
-
-# Plottear el shortest path con matplotlib
-# fig, ax = ox.plot_graph_route(graph_proj, route)
 
 
 def crear_dataframe_route():
