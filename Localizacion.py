@@ -74,6 +74,9 @@ class algoritmoBusqueda():
             # print(f"Se ha guardado el archivo 'mi_archivo.txt' en la carpeta '{carpeta_max_similitud}' "
             #      f"que coincide en un {similitudes[k]*100:.2f}% con {nombre_busqueda}.")
             return ruta_carpeta, similitudes[k]*100
+        else:
+            print("No se encontró ninguna carpeta que coincida con la búsqueda.")
+            return None, 0
 
 
 class Localizar():
@@ -162,20 +165,16 @@ class drawFolium():
         nombre_archivo = f"{nombre_inicio} - {nombre_destino}.html"
         ruta_carpeta, porcentaje_similitud = algoritmo.buscar_carpeta(
             area_especifica, path)
-        ruta_archivo = os.path.join(ruta_carpeta, nombre_archivo)
 
-        if porcentaje_similitud < 70:
+        if porcentaje_similitud < 65 or ruta_carpeta is None:
+            ruta_archivo = os.path.join(
+                f"{path}/{area_especifica}", nombre_archivo)
             os.makedirs(area_especifica)
-            mapaFolium.save(f"{area_especifica}/{nombre_archivo}")
+            mapaFolium.save(ruta_archivo)
 
         else:
-            print(f"Se ha guardado el archivo '{nombre_archivo}' en la carpeta '{area_especifica}' "
-                  f"que coincide en un {porcentaje_similitud:.2f}% con nombre {nombre_inicio} - {nombre_destino}.")
-            mapaFolium.save(f"{ruta_carpeta}/{nombre_archivo}")
-
-        ''' global area_esp, ini, des
-        area_esp = area_especifica
-        ini, des = nodo_inicio, nodo_destino_para'''
+            ruta_archivo = f"{ruta_carpeta}/{nombre_archivo}"
+            mapaFolium.save(ruta_archivo)
 
     def display_pyqt():
         app = QApplication(sys.argv)
