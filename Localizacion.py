@@ -85,39 +85,31 @@ class Localizar():
                     address_line1 = myjson["features"][i]["properties"]["address_line1"]
                     formatted = myjson["features"][i]["properties"]["formatted"]
                     suggestions.append(address_line1)
-                    print(
-                        f"\nSugerencia N°{len(suggestions)}: --> {formatted}")
+                    print(f"\nSugerencia N°{len(suggestions)}: --> {formatted}")
             if len(suggestions) == 0:
-                print(
-                    "\nLo siento, no se encontraron sugerencias para esa ubicación. Inténtalo de nuevo.")
-                location = input(
-                    "\nIntroduce una ubicación para buscar sugerencias -> ")
+                print("\nLo siento, no se encontraron sugerencias para esa ubicación. Inténtalo de nuevo.")
+                location = input("\nIntroduce una ubicación para buscar sugerencias -> ")
             else:
                 flag = True
 
-        selected = int(
-            input("\nSelecciona el número de sugerencia que deseas usar -> "))
+        selected = int(input("\nSelecciona el número de sugerencia que deseas usar -> "))
         while selected > len(suggestions) or selected < 1:
             print("\nSelecciona un número de sugerencia válido.")
-            selected = int(
-                input("\nSelecciona el número de sugerencia que deseas usar -> "))
+            selected = int( input("\nSelecciona el número de sugerencia que deseas usar -> "))
 
-        latitude = myjson["features"][selected -
-                                      1]["geometry"]["coordinates"][1]
-        longitude = myjson["features"][selected -
-                                       1]["geometry"]["coordinates"][0]
+        latitude = myjson["features"][selected -1]["geometry"]["coordinates"][1]
+        longitude = myjson["features"][selected -1]["geometry"]["coordinates"][0]
         coordinates = [latitude, longitude]
-        print(
-            f"\nHas seleccionado la sugerencia {selected} para el nodo.")
+        print(f"\nHas seleccionado la sugerencia {selected} para el nodo.")
         return suggestions[selected - 1], coordinates
 
     def area_especifica(self, area):
-        sugerencias, coordenadas = self.search_suggestions(area, flag=False)
+        sugerencias, coordenadas = self.search_suggestions(area)
         print(f"\n\tHas seleccionado el area especifica: {sugerencias}.\n")
         return area, coordenadas
 
     def busqueda_sugerencias(self, area):
-        location, coordinates = self.search_suggestions(area, flag=False)
+        location, coordinates = self.search_suggestions(area)
         suggestions = [location]
         return suggestions[0], coordinates
 
