@@ -234,7 +234,7 @@ def menu_algoritmos(opcion=None):
         menu_implementacion()
 
     elif (opcion == 3):
-        ruta_selec().main()
+       main()
 
     new_opcion = int(input("\nSeleccionar el grafo a implementar:\n\n\t1. Dijkstra CodeBase\n\t""2. Implementacion Vial\n\t3. Mejor ruta - Algoritmo Voraz\n\t0. Salir de la aplicacion.\n\n\t\t---> "))
     menu_algoritmos(new_opcion)

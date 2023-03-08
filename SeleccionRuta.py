@@ -1,53 +1,86 @@
 import matplotlib.pyplot as plt
-from Ruta import *
+import networkx as nx
 
+class SeleccionRuta:
+    def __init__(self):
+        self.nodos = set()
+        self.aristas = dict()
+        self.distancias = dict()
 
-class SeleccionadorRutas:
-    def __init__(self, distancia_maxima):
-        self.distancia_maxima = distancia_maxima
-        self.rutas = []
+    def agregar_nodo(self, valor):
+        self.nodos.add(valor)
 
-    def agregar_ruta(self, distancia, tiempo):
-        self.rutas.append(Ruta(distancia, tiempo))
+    def agregar_arista(self, desde, hasta, distancia):
+        self.aristas.setdefault(desde, [])
+        self.aristas[desde].append(hasta)
+        self.distancias[(desde, hasta)] = distancia
 
-    def seleccionar_rutas_voraz(self):
-        rutas_ordenadas = sorted(
-            self.rutas, key=lambda ruta: ruta.distancia, reverse=True)
-        distancia_total = 0
-        tiempo_total = 0
-        rutas_seleccionadas = []
-        for ruta in rutas_ordenadas:
-            if distancia_total + ruta.distancia <= self.distancia_maxima:
-                rutas_seleccionadas.append(ruta)
-                distancia_total += ruta.distancia
-                tiempo_total += ruta.tiempo
-        return rutas_seleccionadas, tiempo_total
+    def voraz(self, origen, destino, distancia_maxima):
+        ruta = [origen]
+        distancia_recorrida = 0
+        nodo_actual = origen
 
+        while nodo_actual != destino and distancia_recorrida <= distancia_maxima:
+            vecinos = self.aristas[nodo_actual]
+            distancias = [self.distancias[(nodo_actual, vecino)] for vecino in vecinos]
+            mejor_vecino = vecinos[distancias.index(min(distancias))]
+            distancia_recorrida += min(distancias)
 
-class ruta_selec():
-    def main(self):
-        num_rutas = int(input("Ingrese la cantidad de rutas: "))
-        distancia_maxima = int(
-            input("Ingrese la distancia máxima permitida: "))
-        seleccionador = SeleccionadorRutas(distancia_maxima=distancia_maxima)
-        for i in range(num_rutas):
-            print(f"Ingrese los datos de la ruta {i + 1}")
-            distancia = int(input("Distancia de la ruta: "))
-            tiempo = int(input("Tiempo de la ruta: "))
-            seleccionador.agregar_ruta(distancia, tiempo)
-        rutas_seleccionadas, tiempo_total = seleccionador.seleccionar_rutas_voraz()
-        distancias = []
-        tiempos = []
-        print("Rutas seleccionadas:")
-        for ruta in rutas_seleccionadas:
-            distancias.append(ruta.distancia)
-            tiempos.append(ruta.tiempo)
-            print(f"- Ruta de distancia {ruta.distancia} y tiempo {ruta.tiempo}")
-        distancias, tiempos = zip(*sorted(zip(distancias, tiempos), key=lambda x: x[1]))
-        fig, ax = plt.subplots()
-        ax.plot(distancias, tiempos, 'o-')
-        ax.set_xlabel('Distancia de la ruta')
-        ax.set_ylabel('Tiempo de la ruta')
-        ax.set_title('Rutas seleccionadas')
+            if distancia_recorrida <= distancia_maxima:
+                ruta.append(mejor_vecino)
+                nodo_actual = mejor_vecino
+            else:
+                break
+
+        if nodo_actual == destino and distancia_recorrida <= distancia_maxima:
+            return ruta
+        else:
+            return None
+
+    def dibujar(self, ruta):
+        G = nx.Graph()
+
+        for nodo in self.nodos:
+            G.add_node(nodo)
+
+        for arista, distancia in self.distancias.items():
+            G.add_edge(arista[0], arista[1], weight=distancia)
+
+        pos = nx.spring_layout(G)
+        nodos_rojos = ruta
+        nodos_celestes = list(self.nodos - set(ruta))
+
+        nx.draw_networkx_nodes(G, pos, nodelist=nodos_rojos, node_color='r')
+        nx.draw_networkx_nodes(G, pos, nodelist=nodos_celestes, node_color='c')
+        nx.draw_networkx_edges(G, pos)
+        nx.draw_networkx_labels(G, pos)
+
+        edge_labels = {(arista[0], arista[1]): str(distancia) for arista, distancia in self.distancias.items()}
+        nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels)
+
         plt.show()
-        print(f"Tiempo total: {tiempo_total}")
+
+def main():
+    g = SeleccionRuta()
+
+    origen = input("Ingrese el lugar de origen: ")
+    destino = input("Ingrese el lugar de destino: ")
+    distancia_maxima = int(input("Ingrese la distancia máxima permitida: "))
+    numero_aristas = int(input("Ingrese el número de rutas que desea agregar: "))
+
+    for i in range(numero_aristas):
+        desde = input(f"Ingrese el lugar de origen de la arista {i+1}: ")
+        hasta = input(f"Ingrese el lugar de destino de la arista {i+1}: ")
+        distancia = int(input(f"Ingrese la distancia entre los lugares {desde} y {hasta}: "))
+        g.agregar_nodo(desde)
+        g.agregar_nodo(hasta)
+        g.agregar_arista(desde, hasta, distancia)
+    ruta = g.voraz(origen, destino, distancia_maxima)
+
+    if ruta is None:
+        print("No se pudo encontrar una ruta que cumpla con las restricciones.")
+    else:
+        print(f"La ruta encontrada es: {ruta}")
+        g.dibujar(ruta)
+
+
