@@ -54,17 +54,14 @@ class algoritmoBusqueda():
                 return path, 100
 
         for nombre_carpeta in os.listdir(path):
-            similitud = difflib.SequenceMatcher(
-                None, nombre_busqueda, nombre_carpeta).ratio()
+            similitud = difflib.SequenceMatcher(None, nombre_busqueda, nombre_carpeta).ratio()
             if similitud >= 0.7:
                 similitudes.append(similitud)
 
         if len(similitudes) > 0:
             algoritmo = algoritmoBusqueda()
-            k = int(algoritmo.quickselect(similitudes, 0, len(
-                similitudes)-1, len(similitudes)-1) * len(similitudes))
-            carpeta_max_similitud = [nombre for nombre in os.listdir(
-                path) if difflib.SequenceMatcher(None, nombre_busqueda, nombre).ratio() >= 0.7][k]
+            k = int(algoritmo.quickselect(similitudes, 0, len(similitudes)-1, len(similitudes)-1) * len(similitudes))
+            carpeta_max_similitud = [nombre for nombre in os.listdir(path) if difflib.SequenceMatcher(None, nombre_busqueda, nombre).ratio() >= 0.7][k]
             ruta_carpeta = os.path.join(path, carpeta_max_similitud)
 
             return ruta_carpeta, similitudes[k]*100
@@ -76,6 +73,7 @@ class algoritmoBusqueda():
 class Localizar():
 
     def search_suggestions(self, location, flag=False):
+
         suggestions = []
         while not flag:
 
@@ -85,30 +83,22 @@ class Localizar():
                     address_line1 = myjson["features"][i]["properties"]["address_line1"]
                     formatted = myjson["features"][i]["properties"]["formatted"]
                     suggestions.append(address_line1)
-                    print(
-                        f"\nSugerencia N°{len(suggestions)}: --> {formatted}")
+                    print(f"\nSugerencia N°{len(suggestions)}: --> {formatted}")
             if len(suggestions) == 0:
-                print(
-                    "\nLo siento, no se encontraron sugerencias para esa ubicación. Inténtalo de nuevo.")
-                location = input(
-                    "\nIntroduce una ubicación para buscar sugerencias -> ")
+                print("\nLo siento, no se encontraron sugerencias para esa ubicación. Inténtalo de nuevo.")
+                location = input("\nIntroduce una ubicación para buscar sugerencias -> ")
             else:
                 flag = True
 
-        selected = int(
-            input("\nSelecciona el número de sugerencia que deseas usar -> "))
+        selected = int(input("\nSelecciona el número de sugerencia que deseas usar -> "))
         while selected > len(suggestions) or selected < 1:
             print("\nSelecciona un número de sugerencia válido.")
-            selected = int(
-                input("\nSelecciona el número de sugerencia que deseas usar -> "))
+            selected = int(input("\nSelecciona el número de sugerencia que deseas usar -> "))
 
-        latitude = myjson["features"][selected -
-                                      1]["geometry"]["coordinates"][1]
-        longitude = myjson["features"][selected -
-                                       1]["geometry"]["coordinates"][0]
+        latitude = myjson["features"][selected -1]["geometry"]["coordinates"][1]
+        longitude = myjson["features"][selected -1]["geometry"]["coordinates"][0]
         coordinates = [latitude, longitude]
-        print(
-            f"\nHas seleccionado la sugerencia {selected} para el nodo.")
+        print(f"\nHas seleccionado la sugerencia {selected} para el nodo.")
         return suggestions[selected - 1], coordinates
 
     def area_especifica(self, area):
@@ -125,44 +115,38 @@ class Localizar():
 class drawFolium():
     @staticmethod
     def save_map(nombre_inicio, nombre_destino, coordenadas_area, coordenadas_inicio, coordenadas_destino, area_especifica, medio):
-        G = ox.graph_from_point(
-            coordenadas_area, dist=5000, simplify=True, network_type=medio)
+       
+        G = ox.graph_from_point(coordenadas_area, dist=5000, simplify=True, network_type=medio)
         punto_origen = (coordenadas_inicio[0], coordenadas_inicio[1])
         punto_destino = (coordenadas_destino[0], coordenadas_destino[1])
 
         # nearest_nodes recibe en orden longitud,latitud
-        nodo_origen = ox.distance.nearest_nodes(
-            G, punto_origen[1], punto_origen[0])
-        nodo_destino = ox.distance.nearest_nodes(
-            G, punto_destino[1], punto_destino[0])
+        nodo_origen = ox.distance.nearest_nodes(G, punto_origen[1], punto_origen[0])
+        nodo_destino = ox.distance.nearest_nodes(G, punto_destino[1], punto_destino[0])
         rutaFolium = ox.distance.shortest_path(G, nodo_origen, nodo_destino)
 
-        mapaFolium = ox.plot_route_folium(
-            G, rutaFolium, popup_attribute='length', tiles="OpenStreetMap", color='red')
+        mapaFolium = ox.plot_route_folium(G, rutaFolium, popup_attribute='length', tiles="OpenStreetMap", color='red')
 
-        # add markers for starting and ending points
+        #Agregamos los marcadores y los nombres respectivos de las ubicaciones
         geolocator = Nominatim(user_agent="my-app")
         location_origen = geolocator.reverse(punto_origen)
         location_destino = geolocator.reverse(punto_destino)
-        folium.Marker(location=punto_origen, icon=folium.Icon(
-            color='green', icon='home'), popup=location_origen.address).add_to(mapaFolium)
-        folium.Marker(location=punto_destino, icon=folium.Icon(
-            color='blue', icon='flag'), popup=location_destino.address).add_to(mapaFolium)
+        folium.Marker(location=punto_origen, icon=folium.Icon(color='green', icon='home'), popup=location_origen.address).add_to(mapaFolium)
+        folium.Marker(location=punto_destino, icon=folium.Icon(color='blue', icon='flag'), popup=location_destino.address).add_to(mapaFolium)
 
+        #Verificamos si existe una carpeta previamente con similitud
         path = Path(__file__).resolve().parent
         algoritmo = algoritmoBusqueda()
         global ruta_carpeta, ruta_archivo
         nombre_archivo = f"{nombre_inicio} - {nombre_destino}.html"
-        ruta_carpeta, porcentaje_similitud = algoritmo.buscar_carpeta(
-            area_especifica, path)
+        ruta_carpeta, porcentaje_similitud = algoritmo.buscar_carpeta(area_especifica, path)
 
         if (porcentaje_similitud == 100):
             ruta_archivo = f"{path}/{area_especifica}/{nombre_archivo}"
             mapaFolium.save(ruta_archivo)
 
         elif porcentaje_similitud < 70 or ruta_carpeta is None:
-            ruta_archivo = os.path.join(
-                f"{path}/{area_especifica}", nombre_archivo)
+            ruta_archivo = os.path.join(f"{path}/{area_especifica}", nombre_archivo)
             os.makedirs(area_especifica)
             mapaFolium.save(ruta_archivo)
 
@@ -173,8 +157,7 @@ class drawFolium():
     def display_pyqt():
         app = QApplication(sys.argv)
         window = QWidget()
-        window.setWindowTitle(
-            'Trayecto mínimo - Implementación Dijkstra Algorithm - Grupo 4 ADA')
+        window.setWindowTitle('Trayecto mínimo - Implementación Dijkstra Algorithm - Grupo 4 ADA')
         view = QWebEngineView()
 
         with open(ruta_archivo, 'r') as f:
@@ -198,8 +181,7 @@ class drawFolium():
 
 def search_api(lugar):
 
-    url = (
-        f"https://api.geoapify.com/v1/geocode/autocomplete?text={lugar}&apiKey=2e9ba25ff3ca47d0b02d81540edbafdd")
+    url = (f"https://api.geoapify.com/v1/geocode/autocomplete?text={lugar}&apiKey=2e9ba25ff3ca47d0b02d81540edbafdd")
     headers = CaseInsensitiveDict()
     headers["Accept"] = "application/json"
     resp = requests.get(url, headers=headers)

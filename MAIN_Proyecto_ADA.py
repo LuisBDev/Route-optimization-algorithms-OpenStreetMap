@@ -43,8 +43,7 @@ def obtener_area_especifica():
     area = input("\n\tIntroducir area_especifica --> ")
     localizar = Localizar()
     area_especifica, coordenadas_area = localizar.area_especifica(area)
-    print(
-        f"Coordenadas area_especifica: {coordenadas_area[0],coordenadas_area[1]}")
+    print(f"Coordenadas area_especifica: {coordenadas_area[0],coordenadas_area[1]}")
 
     return area_especifica, coordenadas_area
 
@@ -66,8 +65,7 @@ def proyectar_grafo(area_especifica):
     place_polygon = place_polygon.to_crs(epsg=4326)
 
     # recuperar el grafo
-    graph = ox.graph_from_polygon(
-        place_polygon["geometry"].values[0], network_type='drive')
+    graph = ox.graph_from_polygon(place_polygon["geometry"].values[0], network_type='drive')
 
     # Recuperar solo los bordes o aristas del gráfico
     global edges
@@ -79,8 +77,7 @@ def proyectar_grafo(area_especifica):
 
     # Obtener bordes y nodos
     global nodes_proj, edges_proj
-    nodes_proj, edges_proj = ox.graph_to_gdfs(
-        graph_proj, nodes=True, edges=True)
+    nodes_proj, edges_proj = ox.graph_to_gdfs(graph_proj, nodes=True, edges=True)
 
 
 def ubicar_nearest_nodes(nodo_origen, nodo_destino):
@@ -106,16 +103,14 @@ def filtrar_nodos(orig_node_id, target_node_id):
 
     # Crear un GeoDataFrame a partir de los puntos de origen y destino
     global od_nodes
-    od_nodes = gpd.GeoDataFrame(
-        [orig_node, target_node], geometry='geometry', crs=nodes_proj.crs)
+    od_nodes = gpd.GeoDataFrame([orig_node, target_node], geometry='geometry', crs=nodes_proj.crs)
 
 
 def check_path(orig_node_id, target_node_id):
     # Verificar si existe un path y luego calcular el shortest path
     try:
         global route
-        route = nx.shortest_path(
-            G=graph_proj, source=orig_node_id, target=target_node_id, weight='length')
+        route = nx.shortest_path(G=graph_proj, source=orig_node_id, target=target_node_id, weight='length')
 
     except nx.NetworkXNoPath:
         print(f"No se ha podido calcular el camino mínimo por el momento.\nIntente con otros nodos.")
@@ -133,8 +128,7 @@ def crear_dataframe_route():
 
     # Crear un GeoDataFrame
     global route_geom
-    route_geom = gpd.GeoDataFrame(
-        [[route_line]], geometry='geometry', crs=edges_proj.crs, columns=['geometry'])
+    route_geom = gpd.GeoDataFrame([[route_line]], geometry='geometry', crs=edges_proj.crs, columns=['geometry'])
 
 
 def plottear_elementos(area_especifica):
@@ -163,8 +157,7 @@ def plottear_elementos(area_especifica):
     ax = od_nodes.plot(ax=ax, markersize=30, color='blue')
 
     # Agregar mapa base usando contextily
-    ctx.add_basemap(ax, crs=buildings_proj.crs,
-                    source=ctx.providers.OpenStreetMap.Mapnik)
+    ctx.add_basemap(ax, crs=buildings_proj.crs,source=ctx.providers.OpenStreetMap.Mapnik)
 
 
 def plot_matplotlib():
@@ -174,8 +167,7 @@ def plot_matplotlib():
 
 
 def medio_de_transporte():
-    medio = int(input(
-        "\nEn qué medio desea transportarse\n\t1. Caminando.\n\t2. Auto.\n\t3. Bicicleta.\n\t0. Salir\n\n\t--> "))
+    medio = int(input("\nSeleccion de Medio de Transporte\n\t1. Walk.\n\t2. Drive.\n\t3. Bike.\n\t0. Salir\n\n\t--> "))
     if (medio == 0):
         return
     elif (medio == 1):
@@ -189,36 +181,23 @@ def medio_de_transporte():
         return medio_de_transporte()
 
 
-'''def save_folium(coordenadas_inicio, coordenadas_destino, area_especifica, nodo_inicio, nodo_destino):
-    # ox.config(use_cache=True)
-    medio = medio_de_transporte()
-    drawFolium.save_map(coordenadas_area, coordenadas_inicio,
-                        coordenadas_destino, area_especifica, medio, nodo_inicio, nodo_destino)
-    os.system("cls")'''
-
-
 def menu_opciones(coordenadas_inicio, area_especifica, opcion=None):
     if opcion is None:
         os.system("cls")
-        opcion = int(input(
-            "\n\n\t1. Mostrar matplotlib.\n\t2. Mostrar background\n\t3. Mostrar folium.\n\t0. Salir\n\n\t--> "))
-
-    if opcion == 0:
+        opcion = int(input("\n\n\t1. Display matplotlib.\n\t2. Display background\n\t3. Display folium.\n\t0. Salir\n\n\t--> "))
+    elif opcion == 0:
         sys.exit()
     elif opcion == 1:
         plot_matplotlib()
     elif opcion == 2:
-        bbox = ox.utils_geo.bbox_from_point(
-            point=(coordenadas_inicio[0], coordenadas_inicio[1]), dist=5000)
+        bbox = ox.utils_geo.bbox_from_point(point=(coordenadas_inicio[0], coordenadas_inicio[1]), dist=5000)
         bgcolor = "#061529"
-        ox.plot_graph_route(graph, route, bbox=bbox, route_linewidth=6,
-                            node_size=0, bgcolor=bgcolor, dpi=300)
+        ox.plot_graph_route(graph, route, bbox=bbox, route_linewidth=6,node_size=0, bgcolor=bgcolor, dpi=300)
 
     elif opcion == 3:
         drawFolium.display_pyqt()
 
-    opcion = int(input(
-        "\n\n\t1. Mostrar matplotlib.\n\t2. Mostrar background\n\t3. Mostrar folium.\n\t0. Salir\n\n\t--> "))
+    opcion = int(input("\n\n\t1. Display matplotlib.\n\t2. Display background\n\t3. Display folium.\n\t0. Salir\n\n\t--> "))
     menu_opciones(coordenadas_inicio, area_especifica, opcion)
 
 
@@ -229,16 +208,14 @@ def menu_implementacion():
     nodo_inicio, coordenadas_inicio = input_nodo()
     nodo_destino, coordenadas_destino = input_nodo()
     medio_transporte = medio_de_transporte()
-    orig_node_id, target_node_id = ubicar_nearest_nodes(
-        nodo_inicio, nodo_destino)
+    orig_node_id, target_node_id = ubicar_nearest_nodes(nodo_inicio, nodo_destino)
     filtrar_nodos(orig_node_id, target_node_id)
     check_path(orig_node_id, target_node_id)
     crear_dataframe_route()
     plottear_elementos(area_especifica)
 
     # save_folium()
-    drawFolium.save_map(nodo_inicio, nodo_destino, coordenadas_area, coordenadas_inicio,
-                        coordenadas_destino, area_especifica, medio_transporte)
+    drawFolium.save_map(nodo_inicio, nodo_destino, coordenadas_area, coordenadas_inicio,coordenadas_destino, area_especifica, medio_transporte)
     # os.system("cls")
 
     menu_opciones(coordenadas_inicio, area_especifica, opcion=None)
@@ -259,8 +236,7 @@ def menu_algoritmos(opcion=None):
     elif (opcion == 3):
         ruta_selec().main()
 
-    new_opcion = int(input(
-        "\nSeleccionar el grafo a implementar:\n\n\t1. Dijkstra\n\t""2. Implementacion Vial\n\t3. Mejor ruta\n\t0. Salir de la aplicacion.\n\n\t\t---> "))
+    new_opcion = int(input("\nSeleccionar el grafo a implementar:\n\n\t1. Dijkstra CodeBase\n\t""2. Implementacion Vial\n\t3. Mejor ruta - Algoritmo Voraz\n\t0. Salir de la aplicacion.\n\n\t\t---> "))
     menu_algoritmos(new_opcion)
 
 
