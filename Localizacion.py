@@ -4,6 +4,7 @@ import random
 import difflib
 from pathlib import Path
 import osmnx as ox
+import networkx as nx
 import warnings
 import folium
 import requests
@@ -91,25 +92,23 @@ class Localizar():
         selected = int(input("\nSelecciona el número de sugerencia que deseas usar -> "))
         while selected > len(suggestions) or selected < 1:
             print("\nSelecciona un número de sugerencia válido.")
-            selected = int( input("\nSelecciona el número de sugerencia que deseas usar -> "))
+            selected = int(input("\nSelecciona el número de sugerencia que deseas usar -> "))
 
         latitude = myjson["features"][selected -1]["geometry"]["coordinates"][1]
         longitude = myjson["features"][selected -1]["geometry"]["coordinates"][0]
         coordinates = [latitude, longitude]
         print(f"\nHas seleccionado la sugerencia {selected} para el nodo.")
         return suggestions[selected - 1], coordinates
-        #Big O Notation:O(n^2)
 
     def area_especifica(self, area):
-        sugerencias, coordenadas = self.search_suggestions(area)
+        sugerencias, coordenadas = self.search_suggestions(area, flag=False)
         print(f"\n\tHas seleccionado el area especifica: {sugerencias}.\n")
         return area, coordenadas
-        #Big O Notation: O(n)
+
     def busqueda_sugerencias(self, area):
-        location, coordinates = self.search_suggestions(area)
+        location, coordinates = self.search_suggestions(area, flag=False)
         suggestions = [location]
         return suggestions[0], coordinates
-        #Big O Notation: O(n)
 
 
 class drawFolium():
@@ -126,6 +125,11 @@ class drawFolium():
         rutaFolium = ox.distance.shortest_path(G, nodo_origen, nodo_destino)
 
         mapaFolium = ox.plot_route_folium(G, rutaFolium, popup_attribute='length', tiles="OpenStreetMap", color='red')
+        global length
+        length = nx.shortest_path_length(G=G, source=nodo_origen, target=nodo_destino, weight='length')
+
+        #print("La longitud de la ruta es de ", length, " metros.")
+
 
         #Agregamos los marcadores y los nombres respectivos de las ubicaciones
         geolocator = Nominatim(user_agent="my-app")
@@ -153,7 +157,6 @@ class drawFolium():
         else:
             ruta_archivo = f"{ruta_carpeta}/{nombre_archivo}"
             mapaFolium.save(ruta_archivo)
-       
 
     def display_pyqt():
         app = QApplication(sys.argv)
@@ -176,9 +179,11 @@ class drawFolium():
             sys.exit(app.exec_())
         except SystemExit:
             print('Cerrando Folium...')
+            print(f"La distancia entre nodos es es {length} metros")
+
         finally:
             final_menu()
-        #Big O Notation: O(1)
+
 
 def search_api(lugar):
 
@@ -189,10 +194,10 @@ def search_api(lugar):
     myjson = resp.json()
 
     return myjson
-    #Big O Notation: O(1)
+
 
 def final_menu():
     from MAIN_Proyecto_ADA import menu_implementacion
     os.system("cls")
     menu_implementacion
-    #Big O Notation: O(1)s
+

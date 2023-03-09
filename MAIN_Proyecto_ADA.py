@@ -58,6 +58,7 @@ def menu_opciones(coordenadas_inicio, area_especifica, opcion=None):
         sys.exit()
     elif opcion == 1:
         drawFolium.display_pyqt()
+    
 
     #opcion = int(input("\n\n\t1. Display folium.\n\t0. Salir\n\n\t--> "))
     menu_opciones(coordenadas_inicio, area_especifica, opcion)
@@ -74,6 +75,7 @@ def menu_implementacion():
     drawFolium.save_map(nodo_inicio, nodo_destino, coordenadas_area, coordenadas_inicio,coordenadas_destino, area_especifica, medio_transporte)
 
     menu_opciones(coordenadas_inicio, area_especifica)
+    
     #Big O Notation: O(1)
 
 def menu_algoritmos(opcion=None):
