@@ -221,7 +221,7 @@ def menu_opciones(coordenadas_inicio, area_especifica, opcion=None):
         "\n\n\t1. Mostrar matplotlib.\n\t2. Mostrar background\n\t3. Mostrar folium.\n\t0. Salir\n\n\t--> "))
     menu_opciones(coordenadas_inicio, area_especifica, opcion)
 
-
+    #Big O-Notation: O(n)
 def menu_implementacion():
     # obtener_area_especifica()
     area_especifica, coordenadas_area = obtener_area_especifica()
@@ -242,7 +242,7 @@ def menu_implementacion():
     # os.system("cls")
 
     menu_opciones(coordenadas_inicio, area_especifica, opcion=None)
-
+#Big O Notation: O(1)
 
 def menu_algoritmos(opcion=None):
     if (opcion == 0):
@@ -262,6 +262,6 @@ def menu_algoritmos(opcion=None):
     new_opcion = int(input(
         "\nSeleccionar el grafo a implementar:\n\n\t1. Dijkstra\n\t""2. Implementacion Vial\n\t3. Mejor ruta\n\t0. Salir de la aplicacion.\n\n\t\t---> "))
     menu_algoritmos(new_opcion)
-
+#Big O Notation: O(1)
 
 menu_algoritmos(opcion=None)

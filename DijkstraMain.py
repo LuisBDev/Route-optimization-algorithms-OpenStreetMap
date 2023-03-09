@@ -58,9 +58,7 @@ class display_dijkstra():
             sino = input('¿Desea continuar? (S/N) --> ')
             while sino not in ['S', 's', 'N', 'n']:
                 sino = input("Introducir valor correcto: (S/N) --> ")
-
         g.mostrar_grafica()
-
         # Caminos minimos
         sino = 'S'
         while sino == 'S' or sino == 's':

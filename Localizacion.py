@@ -102,16 +102,18 @@ class Localizar():
         coordinates = [latitude, longitude]
         print(f"\nHas seleccionado la sugerencia {selected} para el nodo.")
         return suggestions[selected - 1], coordinates
+        #Big O Notation:O(n^2)
 
     def area_especifica(self, area):
         sugerencias, coordenadas = self.search_suggestions(area)
         print(f"\n\tHas seleccionado el area especifica: {sugerencias}.\n")
         return area, coordenadas
-
+        #Big O Notation: O(n)
     def busqueda_sugerencias(self, area):
         location, coordinates = self.search_suggestions(area)
         suggestions = [location]
         return suggestions[0], coordinates
+        #Big O Notation: O(n)
 
 
 class drawFolium():
@@ -161,6 +163,7 @@ class drawFolium():
         else:
             ruta_archivo = f"{ruta_carpeta}/{nombre_archivo}"
             mapaFolium.save(ruta_archivo)
+       
 
     def display_pyqt():
         app = QApplication(sys.argv)
@@ -186,7 +189,7 @@ class drawFolium():
             print('Cerrando Folium...')
         finally:
             final_menu()
-
+        #Big O Notation: O(1)
 
 def search_api(lugar):
 
@@ -198,9 +201,10 @@ def search_api(lugar):
     myjson = resp.json()
 
     return myjson
-
+    #Big O Notation: O(1)
 
 def final_menu():
     from MAIN_Proyecto_ADA import menu_implementacion
     os.system("cls")
     menu_implementacion
+    #Big O Notation: O(1)s
