@@ -93,11 +93,7 @@ class Localizar():
         selected = int(input("\nSelecciona el número de sugerencia que deseas usar -> "))
         while selected > len(suggestions) or selected < 1:
             print("\nSelecciona un número de sugerencia válido.")
-<<<<<<< HEAD
             selected = int( input("\nSelecciona el número de sugerencia que deseas usar -> "))
-=======
-            selected = int(input("\nSelecciona el número de sugerencia que deseas usar -> "))
->>>>>>> 9ac2d2cd3b5f7219521be278f6a6feeb02cec46f
 
         latitude = myjson["features"][selected -1]["geometry"]["coordinates"][1]
         longitude = myjson["features"][selected -1]["geometry"]["coordinates"][0]

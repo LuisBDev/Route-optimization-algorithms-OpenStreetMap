@@ -12,7 +12,7 @@ warnings.simplefilter("ignore", UserWarning)
 
 def input_nodo():
 
-    print("\n##### [BÚSQUEDA DE NODO.] #####\n\t --> ")
+    print("\n##### [BÚSQUEDA DE NODO.] #####\n\t ")
     nodo_nombre = input("\tIntroducir nodo --> ")
     localizar = Localizar()
     nodo_nombre, coordenadas_nodo = localizar.busqueda_sugerencias(nodo_nombre)
@@ -73,13 +73,8 @@ def menu_implementacion():
     # save_folium()
     drawFolium.save_map(nodo_inicio, nodo_destino, coordenadas_area, coordenadas_inicio,coordenadas_destino, area_especifica, medio_transporte)
 
-<<<<<<< HEAD
-    menu_opciones(coordenadas_inicio, area_especifica, opcion=None)
-#Big O Notation: O(1)
-=======
     menu_opciones(coordenadas_inicio, area_especifica)
-
->>>>>>> 9ac2d2cd3b5f7219521be278f6a6feeb02cec46f
+    #Big O Notation: O(1)
 
 def menu_algoritmos(opcion=None):
     if (opcion == 0):
