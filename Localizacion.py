@@ -13,8 +13,6 @@ from geopy.geocoders import Nominatim
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout
 from PyQt5.QtWebEngineWidgets import QWebEngineView  # pip install PyQtWebEngine
-
-
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.simplefilter("ignore", UserWarning)
 
