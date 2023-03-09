@@ -2,9 +2,6 @@ import copy
 from DijkstraBaseCode import *
 
 
-def grafica():
-    pass
-
 
 def verificar(lista, a, b):
     if a and b in lista:
@@ -69,3 +66,4 @@ class display_dijkstra():
             sino = input('¿Desea ingresar otros datos? (S/N) --> ')
             while sino not in ['S', 's', 'N', 'n']:
                 sino = input("Introducir valor correcto: (S/N) --> ")
+
