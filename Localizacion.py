@@ -73,10 +73,8 @@ class algoritmoBusqueda():
 class Localizar():
 
     def search_suggestions(self, location, flag=False):
-
         suggestions = []
         while not flag:
-
             myjson = search_api(location)
             for i in range(len(myjson["features"])):
                 if myjson["features"][i]["properties"]["country"] == "Peru":
@@ -105,12 +103,12 @@ class Localizar():
         sugerencias, coordenadas = self.search_suggestions(area, flag=False)
         print(f"\n\tHas seleccionado el area especifica: {sugerencias}.\n")
         return area, coordenadas
-
+    #Big O Notation:O(kn) 
     def busqueda_sugerencias(self, area):
         location, coordinates = self.search_suggestions(area, flag=False)
         suggestions = [location]
         return suggestions[0], coordinates
-
+    #Big O Notation:O(kn)
 
 class drawFolium():
     @staticmethod
@@ -166,6 +164,7 @@ class drawFolium():
         
         return execution_time
     #Big O notation: O(n + m log n + m)
+    
     def display_pyqt():
         app = QApplication(sys.argv)
         window = QWidget()
