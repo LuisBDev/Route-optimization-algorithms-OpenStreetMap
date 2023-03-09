@@ -113,6 +113,7 @@ class Localizar():
 
 class drawFolium():
     @staticmethod
+    
     def save_map(nombre_inicio, nombre_destino, coordenadas_area, coordenadas_inicio, coordenadas_destino, area_especifica, medio):
        
         G = ox.graph_from_point(coordenadas_area, dist=5000, simplify=True, network_type=medio)
@@ -172,14 +173,14 @@ class drawFolium():
         layout = QVBoxLayout(window)
         layout.addWidget(view)
         layout.setAlignment(view, Qt.AlignCenter)
-
+        print(f"La distancia entre nodos es es {length} metros")
         window.show()
 
         try:
             sys.exit(app.exec_())
         except SystemExit:
             print('Cerrando Folium...')
-            print(f"La distancia entre nodos es es {length} metros")
+            
 
         finally:
             final_menu()

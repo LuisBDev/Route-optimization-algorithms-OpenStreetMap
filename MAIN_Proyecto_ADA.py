@@ -1,4 +1,5 @@
 import os
+import time
 import matplotlib.pyplot as plt
 import warnings
 from Localizacion import *
@@ -49,7 +50,7 @@ def medio_de_transporte():
 
 def menu_opciones(coordenadas_inicio, area_especifica, opcion=None):
     if opcion is None:
-        os.system("cls")
+        #os.system("cls")
         opcion = int(input("\n\n\t1. Display folium.\n\t0. Salir\n\n\t--> "))
         while (opcion not in [0, 1]):
             print("Opción inválida...")
@@ -72,8 +73,10 @@ def menu_implementacion():
     medio_transporte = medio_de_transporte()
     
     # save_folium()
+    start = time.time()
     drawFolium.save_map(nodo_inicio, nodo_destino, coordenadas_area, coordenadas_inicio,coordenadas_destino, area_especifica, medio_transporte)
-
+    end = time.time()
+    print(f"Tiempo de ejecución: {end - start} segundos")
     menu_opciones(coordenadas_inicio, area_especifica)
     
     #Big O Notation: O(1)
