@@ -81,6 +81,7 @@ def main():
         print("No se pudo encontrar una ruta que cumpla con las restricciones.")
     else:
         print(f"La ruta encontrada es: {ruta}")
+        plt.title(f'La ruta seleccionada minima es {ruta}')
         g.dibujar(ruta)
 
 
