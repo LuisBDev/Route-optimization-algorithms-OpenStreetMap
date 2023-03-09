@@ -100,7 +100,7 @@ class Localizar():
         coordinates = [latitude, longitude]
         print(f"\nHas seleccionado la sugerencia {selected} para el nodo.")
         return suggestions[selected - 1], coordinates
-
+    #Big O Notation:O(n^2) 
     def area_especifica(self, area):
         sugerencias, coordenadas = self.search_suggestions(area, flag=False)
         print(f"\n\tHas seleccionado el area especifica: {sugerencias}.\n")
@@ -120,15 +120,17 @@ class drawFolium():
         G = ox.graph_from_point(coordenadas_area, dist=5000, simplify=True, network_type=medio)
         punto_origen = (coordenadas_inicio[0], coordenadas_inicio[1])
         punto_destino = (coordenadas_destino[0], coordenadas_destino[1])
-
+        #Big O notation:O(n)
         # nearest_nodes recibe en orden longitud,latitud
         nodo_origen = ox.distance.nearest_nodes(G, punto_origen[1], punto_origen[0])
         nodo_destino = ox.distance.nearest_nodes(G, punto_destino[1], punto_destino[0])
+        #Big O notation:O(m*logn)
         start = time.time()
         rutaFolium = ox.distance.shortest_path(G, nodo_origen, nodo_destino)
         end = time.time()
         execution_time = (end-start)*1000
         mapaFolium = ox.plot_route_folium(G, rutaFolium, popup_attribute='length', tiles="OpenStreetMap", color='red')
+        #Big O notation:O(m)
         global length
         length = nx.shortest_path_length(G=G, source=nodo_origen, target=nodo_destino, weight='length')
 
@@ -141,7 +143,7 @@ class drawFolium():
         location_destino = geolocator.reverse(punto_destino)
         folium.Marker(location=punto_origen, icon=folium.Icon(color='green', icon='home'), popup=location_origen.address).add_to(mapaFolium)
         folium.Marker(location=punto_destino, icon=folium.Icon(color='blue', icon='flag'), popup=location_destino.address).add_to(mapaFolium)
-
+        #Big O notation:O(1)
         #Verificamos si existe una carpeta previamente con similitud
         path = Path(__file__).resolve().parent
         algoritmo = algoritmoBusqueda()
@@ -163,7 +165,7 @@ class drawFolium():
             mapaFolium.save(ruta_archivo)
         
         return execution_time
-
+    #Big O notation: O(n + m log n + m)
     def display_pyqt():
         app = QApplication(sys.argv)
         window = QWidget()
@@ -189,7 +191,7 @@ class drawFolium():
 
         finally:
             final_menu()
-
+    #Big O notation:O(1)
 
 def search_api(lugar):
 
@@ -200,10 +202,10 @@ def search_api(lugar):
     myjson = resp.json()
 
     return myjson
-
+    #Big O notation:O(1)
 
 def final_menu():
     from MAIN_Proyecto_ADA import menu_implementacion
     os.system("cls")
     menu_implementacion
-
+    #Big O notation:O(1)
