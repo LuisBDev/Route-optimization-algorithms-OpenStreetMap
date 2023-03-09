@@ -1,4 +1,5 @@
 import sys
+import time
 import os
 import random
 import difflib
@@ -123,8 +124,10 @@ class drawFolium():
         # nearest_nodes recibe en orden longitud,latitud
         nodo_origen = ox.distance.nearest_nodes(G, punto_origen[1], punto_origen[0])
         nodo_destino = ox.distance.nearest_nodes(G, punto_destino[1], punto_destino[0])
+        start = time.time()
         rutaFolium = ox.distance.shortest_path(G, nodo_origen, nodo_destino)
-
+        end = time.time()
+        execution_time = (end-start)*1000
         mapaFolium = ox.plot_route_folium(G, rutaFolium, popup_attribute='length', tiles="OpenStreetMap", color='red')
         global length
         length = nx.shortest_path_length(G=G, source=nodo_origen, target=nodo_destino, weight='length')
@@ -158,6 +161,8 @@ class drawFolium():
         else:
             ruta_archivo = f"{ruta_carpeta}/{nombre_archivo}"
             mapaFolium.save(ruta_archivo)
+        
+        return execution_time
 
     def display_pyqt():
         app = QApplication(sys.argv)

@@ -19,6 +19,7 @@ def input_nodo():
     nodo_nombre, coordenadas_nodo = localizar.busqueda_sugerencias(nodo_nombre)
     print(f"Nodo: {nodo_nombre} - Coordenadas: {coordenadas_nodo}")
     return nodo_nombre, coordenadas_nodo
+    #Big O Notation: O(1)
 
 
 
@@ -31,6 +32,8 @@ def obtener_area_especifica():
     print(f"Coordenadas area_especifica: {coordenadas_area[0],coordenadas_area[1]}")
 
     return area_especifica, coordenadas_area
+    #Big O Notation: O(1)
+
 
 
 def medio_de_transporte():
@@ -46,6 +49,8 @@ def medio_de_transporte():
     else:
         print("Opción inválida...")
         return medio_de_transporte()
+    #Big O Notation: O(1)
+    
 
 
 def menu_opciones(coordenadas_inicio, area_especifica, opcion=None):
@@ -65,6 +70,8 @@ def menu_opciones(coordenadas_inicio, area_especifica, opcion=None):
     menu_opciones(coordenadas_inicio, area_especifica, opcion)
 
     #Big O-Notation: O(n)
+
+
 def menu_implementacion():
 
     area_especifica, coordenadas_area = obtener_area_especifica()
@@ -73,10 +80,10 @@ def menu_implementacion():
     medio_transporte = medio_de_transporte()
     
     # save_folium()
-    start = time.time()
-    drawFolium.save_map(nodo_inicio, nodo_destino, coordenadas_area, coordenadas_inicio,coordenadas_destino, area_especifica, medio_transporte)
-    end = time.time()
-    print(f"Tiempo de ejecución: {end - start} segundos")
+    
+    execution_time = drawFolium.save_map(nodo_inicio, nodo_destino, coordenadas_area, coordenadas_inicio,coordenadas_destino, area_especifica, medio_transporte)
+    
+    print(f"Tiempo de ejecución: {execution_time} ms")
     menu_opciones(coordenadas_inicio, area_especifica)
     
     #Big O Notation: O(1)
@@ -98,7 +105,7 @@ def menu_algoritmos(opcion=None):
 
     new_opcion = int(input("\nSeleccionar el grafo a implementar:\n\n\t1. Dijkstra CodeBase\n\t""2. Implementacion Vial\n\t3. Mejor ruta - Algoritmo Voraz\n\t0. Salir de la aplicacion.\n\n\t\t---> "))
     menu_algoritmos(new_opcion)
-#Big O Notation: O(1)
+    #Big O Notation: O(1)
 
 
 menu_algoritmos()
