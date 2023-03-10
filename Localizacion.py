@@ -46,6 +46,8 @@ class algoritmoBusqueda():
             return self.quickselect(list, left_idx, store_idx - 1, kth_smallest)
         else:
             return self.quickselect(list, store_idx + 1, right_idx, kth_smallest)
+        
+        #Big O (n^2)
 
     def buscar_carpeta(self, nombre_busqueda, path):
         similitudes = []
@@ -118,22 +120,19 @@ class drawFolium():
         G = ox.graph_from_point(coordenadas_area, dist=5000, simplify=True, network_type=medio)
         punto_origen = (coordenadas_inicio[0], coordenadas_inicio[1])
         punto_destino = (coordenadas_destino[0], coordenadas_destino[1])
-        #Big O notation:O(n)
+
         # nearest_nodes recibe en orden longitud,latitud
         nodo_origen = ox.distance.nearest_nodes(G, punto_origen[1], punto_origen[0])
         nodo_destino = ox.distance.nearest_nodes(G, punto_destino[1], punto_destino[0])
-        #Big O notation:O(m*logn)
+
         start = time.time()
         rutaFolium = ox.distance.shortest_path(G, nodo_origen, nodo_destino)
         end = time.time()
         execution_time = (end-start)*1000
         mapaFolium = ox.plot_route_folium(G, rutaFolium, popup_attribute='length', tiles="OpenStreetMap", color='red')
-        #Big O notation:O(m)
+
         global length
         length = nx.shortest_path_length(G=G, source=nodo_origen, target=nodo_destino, weight='length')
-
-        #print("La longitud de la ruta es de ", length, " metros.")
-
 
         #Agregamos los marcadores y los nombres respectivos de las ubicaciones
         geolocator = Nominatim(user_agent="my-app")
@@ -141,7 +140,7 @@ class drawFolium():
         location_destino = geolocator.reverse(punto_destino)
         folium.Marker(location=punto_origen, icon=folium.Icon(color='green', icon='home'), popup=location_origen.address).add_to(mapaFolium)
         folium.Marker(location=punto_destino, icon=folium.Icon(color='blue', icon='flag'), popup=location_destino.address).add_to(mapaFolium)
-        #Big O notation:O(1)
+
         #Verificamos si existe una carpeta previamente con similitud
         path = Path(__file__).resolve().parent
         algoritmo = algoritmoBusqueda()
@@ -163,7 +162,7 @@ class drawFolium():
             mapaFolium.save(ruta_archivo)
         
         return execution_time
-    #Big O notation: O(n + m log n + m)
+    
     
     def display_pyqt():
         app = QApplication(sys.argv)

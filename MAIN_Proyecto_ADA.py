@@ -55,20 +55,16 @@ def medio_de_transporte():
 
 def menu_opciones(coordenadas_inicio, area_especifica, opcion=None):
     if opcion is None:
-        #os.system("cls")
         opcion = int(input("\n\n\t1. Display folium.\n\t0. Salir\n\n\t--> "))
         while (opcion not in [0, 1]):
             print("Opción inválida...")
             opcion = int(input("\n\n\t1. Display folium.\n\t0. Salir\n\n\t--> "))
-    elif opcion == 0:
-        sys.exit()
+    if opcion == 0:
+        return
     elif opcion == 1:
         drawFolium.display_pyqt()
-    
 
-    #opcion = int(input("\n\n\t1. Display folium.\n\t0. Salir\n\n\t--> "))
-    menu_opciones(coordenadas_inicio, area_especifica, opcion)
-
+    menu_opciones(coordenadas_inicio, area_especifica)
     #Big O-Notation: O(n)
 
 
@@ -79,33 +75,29 @@ def menu_implementacion():
     nodo_destino, coordenadas_destino = input_nodo()
     medio_transporte = medio_de_transporte()
     
-    # save_folium()
-    
     execution_time = drawFolium.save_map(nodo_inicio, nodo_destino, coordenadas_area, coordenadas_inicio,coordenadas_destino, area_especifica, medio_transporte)
     
     print(f"Tiempo de ejecución: {execution_time} ms")
     menu_opciones(coordenadas_inicio, area_especifica)
-    
+
     #Big O Notation: O(1)
 
 def menu_algoritmos(opcion=None):
-    if (opcion == 0):
+    opciones = {
+        1: display_dijkstra.main,
+        2: menu_implementacion,
+        3: main
+    }
+    if opcion == 0:
         return
-
-    elif (opcion == 1):
-        display_dijkstra.main()
+        
+    if opcion in opciones:
+        opciones[opcion]()
         os.system("cls")
-
-    elif (opcion == 2):
-        # os.system("cls")
-        menu_implementacion()
-
-    elif (opcion == 3):
-       main()
-
+    
     new_opcion = int(input("\nSeleccionar el grafo a implementar:\n\n\t1. Dijkstra CodeBase\n\t""2. Implementacion Vial\n\t3. Mejor ruta - Algoritmo Voraz\n\t0. Salir de la aplicacion.\n\n\t\t---> "))
     menu_algoritmos(new_opcion)
-    #Big O Notation: O(1)
+    #Big O Notation: O(n)
 
 
 menu_algoritmos()
